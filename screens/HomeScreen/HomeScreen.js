@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         marginTop: 10,
-        paddingHorizontal: 10,
     },
     cardTitle: {
         fontSize: 16,
