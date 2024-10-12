@@ -1,85 +1,96 @@
-// HomeScreen.js
+// screens/HomeScreen/HomeScreen.js
 import React from 'react';
-import { View, Text, StyleSheet, Image, TextInput, FlatList } from 'react-native';
-import { Card, Provider as PaperProvider } from 'react-native-paper';
+import { View, Text, StyleSheet, Image, TextInput, FlatList, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import promoteData from '../../data/promoteData';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
-    return(
-        <PaperProvider>
-            <SafeAreaView style={styles.container}>
-                {/* Thanh Chào */}
-                <View style={styles.welcomeBarContainer}>
-                    <View style={styles.planeIcon}> 
-                        <MaterialCommunityIcons name="airplane" size={40} color="white"/>
-                    </View>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.title}>Explore Flight</Text>
-                        <Text style={styles.subtitle}>Welcome to flight booking</Text>
-                    </View>
-                    <View style={styles.userImg}>
-                        <Image
-                            source={require('../../assets/img/user.png')}
-                            style={styles.imageUser}
-                        />
-                    </View>
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
+            {/* Thanh Chào */}
+            <View style={styles.welcomeBarContainer}>
+                <View style={styles.planeIcon}> 
+                    <MaterialCommunityIcons name="airplane" size={40} color="white"/>
                 </View>
-
-                {/* Thanh Tìm Kiếm */}
-                <View style={styles.searchingBarContainer}>
-                    <MaterialCommunityIcons name="magnify" size={24} color="#9E9E9E" />
-                    <TextInput
-                        underlineColorAndroid="transparent"
-                        style={styles.searchingBar}
-                        placeholder='Find a flight'
-                        placeholderTextColor="#9E9E9E"
+                <View style={styles.textContainer}>
+                    <Text style={styles.title}>Explore Flight</Text>
+                    <Text style={styles.subtitle}>Welcome to flight booking</Text>
+                </View>
+                <View style={styles.userImg}>
+                    <Image
+                        source={require('../../assets/img/user.png')}
+                        style={styles.imageUser}
                     />
                 </View>
+            </View>
 
-                {/* Tiêu đề Danh sách Promotion */}
-                <View>
-                    <Text style={styles.promoteTitle}>The best cities for you</Text>
-                </View>
+            {/* Thanh Tìm Kiếm */}
+            <View style={styles.searchingBarContainer}>
+                <MaterialCommunityIcons name="magnify" size={24} color="#9E9E9E" />
+                <TextInput
+                    underlineColorAndroid="transparent"
+                    style={styles.searchingBar}
+                    placeholder='Find a flight'
+                    placeholderTextColor="#9E9E9E"
+                />
+            </View>
 
-                {/* Danh Sách Promotion - Chế Độ Ngang */}
-                <View style={styles.promoteListContainer}>
+            {/* Tiêu đề Danh sách Promotion */}
+            <View>
+                <Text style={styles.promoteTitle}>The best cities for you</Text>
+            </View>
+
+            {/* Danh Sách Promotion - Chế Độ Ngang */}
+            <View style={styles.promoteListContainer}>
                 <FlatList
-                        data={promoteData}
-                        keyExtractor={item => item.id.toString()}
-                        renderItem={({item}) => (
-                            <View style={styles.customCard}>
-                                <Image source={item.img} style={styles.cardImage}/>
-                                <View style={styles.cardContent}>
-                                    <Text style={styles.cardTitle}>{item.title}</Text>
-                                    <Text style={styles.cardDescription}>{item.description}</Text>
-                                </View>
+                    data={promoteData}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({item}) => (
+                        <View style={styles.customCard}>
+                            <Image source={item.img} style={styles.cardImage}/>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardTitle}>{item.title}</Text>
+                                <Text style={styles.cardDescription}>{item.description}</Text>
                             </View>
-                        )}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.flatListContent}
-                        ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    />
-                </View>
-            </SafeAreaView>
-        </PaperProvider>
+                        </View>
+                    )}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.flatListContent}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                />
+            </View>
+
+            {/* Tiêu đề Explore Destinations */}
+            <View>
+                <Text style={styles.promoteTitle}>Explore Destinations</Text>
+            </View>
+
+            {/* Hình ảnh Explore */}
+            <View>
+                <Image
+                    style={styles.exploreImg}
+                    source={require('../../assets/img/explore.png')}
+                />
+            </View>
+        </ScrollView>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container:{
-        flex: 1,
+    container:{ 
         backgroundColor: '#fff',
     },
     welcomeBarContainer:{
-        marginTop: 30,
+        marginTop: 10,
         height: 80,
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 10,
-        backgroundColor: 'white', // Đặt màu nền cho thanh chào
+        backgroundColor: 'white',
         borderRadius: 10,
         marginHorizontal: 10,
     },
@@ -167,6 +178,7 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         marginTop: 10,
+        paddingHorizontal: 10,
     },
     cardTitle: {
         fontSize: 16,
@@ -182,7 +194,14 @@ const styles = StyleSheet.create({
     },
     separator: {
         width: 10,
-        height: 0, // Đảm bảo separator không hiển thị
+        height: 0,
+    },
+    exploreImg:{
+        marginTop: 20,
+        width: '90%',
+        height: 400,
+        borderRadius: 10,
+        alignSelf: 'center',
     },
 });
 
