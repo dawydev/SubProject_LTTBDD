@@ -1,11 +1,61 @@
 // screens/HomeScreen/HomeScreen.js
 import React from 'react';
-import { View, Text, StyleSheet, Image, TextInput, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, FlatList, ScrollView , TouchableOpacity} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import promoteData from '../../data/promoteData';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+
+import ExploreScreen from '../ExploreScreen/ExploreScreen.js';
+import UserScreen from '../UserScreen/UserScreen.js';
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function BottomTabNavigator() {
+    return (
+      <Tab.Navigator
+        initialRouteName="HomeTab"
+        screenOptions={({ route }) => ({
+          // Cấu hình icon cho từng tab
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'HomeTab') {
+              iconName = focused
+                ? 'home-outline'
+                : 'home-outline';
+            } else if (route.name === 'User') {
+              iconName = focused ? 'account' : 'account-outline';
+            } else if (route.name === 'Explore') {
+              iconName = focused ? 'earth' : 'earth';
+            }
+
+            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: '#00BDDA',
+          tabBarInactiveTintColor: 'gray',
+          headerShown: false, // Ẩn header mặc định
+          tabBarStyle: {
+            backgroundColor: '#fff',
+            borderTopWidth: 1,
+            borderTopColor: '#e5e5e5',
+            elevation: 5, // Thêm đổ bóng cho tab bar trên Android
+          },
+        })}
+      >
+        <Tab.Screen name="HomeTab" component={HomeScreen} />
+        <Tab.Screen name="Explore" component={ExploreScreen} />
+        <Tab.Screen name="User" component={UserScreen} />
+      </Tab.Navigator>
+    );
+  }
 
 const HomeScreen = () => {
+
+    const navigation = useNavigation();
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.container}>
@@ -29,12 +79,11 @@ const HomeScreen = () => {
             {/* Thanh Tìm Kiếm */}
             <View style={styles.searchingBarContainer}>
                 <MaterialCommunityIcons name="magnify" size={24} color="#9E9E9E" />
-                <TextInput
-                    underlineColorAndroid="transparent"
-                    style={styles.searchingBar}
-                    placeholder='Find a flight'
-                    placeholderTextColor="#9E9E9E"
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('SearchingFlight')} >
+                    <Text style={{marginLeft: 10,fontSize:15, color:"#9E9E9E"}}>
+                        Find a flight
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             {/* Tiêu đề Danh sách Promotion */}
@@ -80,6 +129,8 @@ const HomeScreen = () => {
     );
 };
 
+
+  
 const styles = StyleSheet.create({
     container:{ 
         backgroundColor: '#fff',
@@ -203,5 +254,4 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 });
-
-export default HomeScreen;
+export default BottomTabNavigator;
