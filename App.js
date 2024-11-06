@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeScreen from './screens/HomeScreen/HomeScreen.js';
 import UserScreen from './screens/UserScreen/UserScreen.js';
 import ExploreScreen from './screens/ExploreScreen/ExploreScreen.js';
-import SearchingFlightScreen from './screens/SearchingFlightScreen/SearchingFlightScreen.js';  // Màn hình mới
+import SearchingFlightScreen from './screens/SearchingFlightScreen/SearchingFlightScreen.js';
 
 // Tạo Bottom Tab Navigator
 const Tab = createBottomTabNavigator();

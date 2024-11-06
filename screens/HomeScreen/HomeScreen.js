@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     planeIcon:{
-        height: 55,
-        width: 55,
+        height: 50,
+        width: 50,
         backgroundColor: '#00BDDA',
         borderRadius: 8,
         justifyContent: 'center',
