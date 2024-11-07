@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
 // Định dạng ngày hôm nay với thứ viết tắt, tháng viết tắt và ngày
 const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+        return "Invalid date";
+    }
     return new Intl.DateTimeFormat('en-US', {
         weekday: 'short',
         month: 'short',
@@ -13,215 +16,100 @@ const formatDate = (date) => {
 };
 
 const RoundTrip = () => {
-    const [departDay, setDepartDay] = useState(formatDate(new Date()));
-    const [returnDay, setReturnDay] = useState(formatDate(new Date()));
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedLocationId, setSelectedLocationId] = useState(null);
+    const [departDay, setDepartDay] = useState(new Date());
+    const [returnDay, setReturnDay] = useState(new Date());
     const [isModalVisible, setModalVisible] = useState(false);
-    const [isToModalVisible, setToModalVisible] = useState(false);
+    const [isModalVisible2, setModalVisible2] = useState(false);
+    const [selectedDateType, setSelectedDateType] = useState('');
 
-    const toggleModalFrom = () => {
-        setModalVisible(!isModalVisible);
+    const toggleModal = () => setModalVisible(!isModalVisible);
+    const Daymodal = () => setModalVisible2(!isModalVisible2);
+
+    const handleDateChange = (day) => {
+        if (selectedDateType === 'depart') {
+            setDepartDay(new Date(day.dateString));
+            setSelectedDateType('return'); // Chuyển sang chọn ngày về
+        } else if (selectedDateType === 'return') {
+            setReturnDay(new Date(day.dateString));
+            setModalVisible2(false); // Đóng modal sau khi chọn ngày về
+        }
     };
 
-    const toggleModalTo = () => {
-        setToModalVisible(!isToModalVisible);
+    // Hàm đánh dấu các ngày ở giữa ngày đi và về
+    const getIntermediateDates = (start, end) => {
+        if (!start || !end) return {};
+        const dates = {};
+        let currentDate = new Date(start);
+        const endDate = new Date(end);
+
+        while (currentDate < endDate) {
+            currentDate.setDate(currentDate.getDate() + 1);
+            const dateString = currentDate.toISOString().split('T')[0];
+            if (dateString !== end.toISOString().split('T')[0]) {
+                dates[dateString] = { color: '#B2EFFF', textColor: 'black' };
+            }
+        }
+        return dates;
     };
-    
-    
-    const [isExpanded, setIsExpanded] = useState(false);
-    
-    // DATA MẪU LOCATION VÀ AIRPORT
-    const sampleData = [
-        { id: '1', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-        { id: '2', city: 'London, Ontario, Canada', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-        { id: '3', city: 'Viet Nam, Tan San Nhat', description: 'Ho Chi Minh City', airports: [{ name: 'Tan San Nhat', distance: '2,210 km', code:'TSN' }] },
-        { id: '4', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-        { id: '5', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-        { id: '6', city: 'VietNam', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-
-    ];
-    const [visibleAirports, setVisibleAirports] = useState({});
-
-    const toggleAirports = (id) => {
-        setVisibleAirports((prevState) => ({
-            ...prevState,
-            [id]: !prevState[id], // Toggle trạng thái hiển thị cho từng id riêng biệt
-        }));
-    };
-
-    // Handle khi nhấn vào airport button
-    const handleAirportPress = (airport) => {
-        console.log(`Selected airport: ${airport.name}`);
-        // Thêm logic xử lý ở đây, chẳng hạn hiển thị chi tiết sân bay hoặc điều hướng
-    };
-
-    const handleLocationPress = (id) => {
-        setSelectedLocationId(id);
-        toggleAirports(id);
-    };
-
-    const renderItem = ({ item }) => (
-        <View style={styles.locationItem }>
-            <View style={{ flexDirection: 'row', marginBottom: 10}}>
-                {/* Location button */}
-                <TouchableOpacity style={{backgroundColor: 'white', width:'100%'}} onPress={() => handleLocationPress(item.id)}>
-                    <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center' }}>
-                        <MaterialCommunityIcons name="map-marker" size={23} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                        <View style={{ flexDirection: 'column', marginLeft: 10 }}>
-                            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.city}</Text>
-                            <Text style={{ fontSize: 13, fontWeight: 'bold', marginTop: 5, color: '#A5AAAD' }}>{item.description}</Text>
-                        </View>
-                        {/* Toggle icon */}
-                <AntDesign
-                    style={{marginLeft: 'auto'}}
-                    name={visibleAirports[item.id] ? "caretup" : "caretdown"} // Hiển thị caretup nếu mở, caretdown nếu đóng
-                    size={10}
-                />
-                    </View>
-                </TouchableOpacity>
-            </View>
-
-            {/* Dropdown list of airport buttons */}
-            {visibleAirports[item.id] && (
-                item.airports?.length > 0 ? (
-                    item.airports.map((airport, index) => (
-                        <TouchableOpacity 
-                            key={airport.code || index} 
-                            style={{ flexDirection: 'row', marginLeft: 60, paddingVertical: 10, alignItems: 'center', backgroundColor: 'white' }}
-                            onPress={() => handleAirportPress(airport)} // Gọi hàm khi nhấn vào airport button
-                        >
-                            <MaterialCommunityIcons name="airplane" size={23} color="black" style={{ marginRight: 10 }} />
-                            <View style={{flexDirection:'row'}}>
-                                <View style={{width:'83%'}}>
-                                    <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{airport.name}</Text>
-                                    <Text style={{ fontSize: 13, color: '#A5AAAD', fontWeight: 'bold' }}>{airport.distance} to destination</Text>
-                                </View>
-                                <View>
-                                    <Text style={{ fontSize: 15, color: 'black', fontWeight: '600'}}>{airport.code}</Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    ))
-                ) : (
-                    <Text style={styles.noAirportText}>No airports available</Text>
-                )
-            )}
-        </View>
-    );
-    
-
     return (
         <SafeAreaView style={styles.container}>
-            {/* From and To */}
-            <View style={styles.fromToContainer}>
-                {/* From */}
-                <TouchableOpacity style={styles.flightFromButton} onPress={toggleModalFrom}>
-                    <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.text}>From</Text>
-                </TouchableOpacity>
-
-                {/* To */}
-                <TouchableOpacity style={styles.flightToButton} onPress={toggleModalTo}>
-                    <MaterialCommunityIcons name="airplane-landing" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.text}>To</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Ngày đi và ngày về */}
-            <View style={styles.dateContainer}>
-                {/* depart day */}
-                <TouchableOpacity style={styles.departDayButton}>
-                    <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.dateText}>{departDay}</Text>
-                </TouchableOpacity>
-
-                {/* return day */}
-                <TouchableOpacity style={styles.returnDayButton}>
-                    <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.dateText}>{returnDay}</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Traveller and Cabin Class */}
-            <View style={styles.travelerCabinContainer}>
-                <TouchableOpacity style={styles.travelerCabinButton}>
-                    <MaterialCommunityIcons name="account" size={27} color="#757575" style={{ marginRight: 10, marginLeft: 40 }} />
-                    <Text style={{color:"black"}}>1 traveler</Text>
-                    <MaterialCommunityIcons name="rhombus-medium" size={10} color="#757575" style={{ marginRight: 10, marginLeft:10}} />
-                    <MaterialCommunityIcons name="seat-passenger" size={27} color="#757575" style={{ }} />
-                    <Text style={{color:"black", marginLeft:10}}>Economy</Text>
-                    <MaterialCommunityIcons name="chevron-down" size={27} color="#757575" style={{marginLeft:70}} />
-                </TouchableOpacity>
-            </View>
-
-            {/* Nút Search Flight */}
-            <TouchableOpacity style={styles.searchFlightButton}>
-                <Text style={styles.searchFlightText}>Search Flight</Text>
+        <View style={styles.fromToContainer}>
+            <TouchableOpacity style={styles.flightFromButton} onPress={toggleModal}>
+                <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+                <Text style={styles.text}>From</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.flightToButton}>
+                <MaterialCommunityIcons name="airplane-landing" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+                <Text style={styles.text}>To</Text>
+            </TouchableOpacity>
+        </View>
 
-            {/* "Where From" Modal */}
-            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-            <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
-                            <Text style={styles.modalTitle}>Where from?</Text>
-                            <TouchableOpacity onPress={toggleModalFrom} style={styles.closeButton}>
-                                <MaterialCommunityIcons name="close" size={27} color="#919398" />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.fromToContainer}>
-                            <View style={styles.textInputButton}>
-                                <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                                <TextInput
-                                    style={{ backgroundColor: '#F3F4F6', width: '80%', height: 50 }}
-                                    value={searchQuery}
-                                    onChangeText={setSearchQuery}
-                                    placeholder='Find the place'
-                                />
-                            </View>
-                        </View>
-                        <FlatList
-                            style={{ width: '100%', height: '80%', marginTop: 10 }}
-                            data={sampleData.filter(item => item.city.toLowerCase().includes(searchQuery.toLowerCase()))}
-                            renderItem={renderItem}
-                            keyExtractor={item => item.id}
-                        />
-                    </View>
-                </View>
-            </Modal>
+        <View style={styles.dateContainer}>
+            <TouchableOpacity style={styles.departDayButton} onPress={() => { setSelectedDateType('depart'); Daymodal(); }}>
+                <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+                <Text style={styles.dateText}>{formatDate(departDay)}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.returnDayButton} onPress={() => { setSelectedDateType('return'); Daymodal(); }}>
+                <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+                <Text style={styles.dateText}>{formatDate(returnDay)}</Text>
+            </TouchableOpacity>
+        </View>
 
-            {/* "Where To" Modal */}
-            <Modal visible={isToModalVisible} animationType="slide" transparent={true}>
+        <TouchableOpacity style={styles.searchFlightButton}>
+            <Text style={styles.searchFlightText}>Search Flight</Text>
+        </TouchableOpacity>
+
+        <Modal visible={isModalVisible2} animationType="slide" transparent={true}>
             <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
-                            <Text style={styles.modalTitle}>Where to?</Text>
-                            <TouchableOpacity onPress={toggleModalTo} style={styles.closeButton}>
-                                <MaterialCommunityIcons name="close" size={27} color="#919398" />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.fromToContainer}>
-                            <View style={styles.textInputButton}>
-                                <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                                <TextInput
-                                    style={{ backgroundColor: '#F3F4F6', width: '80%', height: 50 }}
-                                    value={searchQuery}
-                                    onChangeText={setSearchQuery}
-                                    placeholder='Find the place'
-                                />
-                            </View>
-                        </View>
-                        <FlatList
-                            style={{ width: '100%', height: '80%', marginTop: 10 }}
-                            data={sampleData.filter(item => item.city.toLowerCase().includes(searchQuery.toLowerCase()))}
-                            renderItem={renderItem}
-                            keyExtractor={item => item.id}
-                        />
-                    </View>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Select Dates</Text>
+                    <TouchableOpacity onPress={Daymodal} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>Close</Text>
+                    </TouchableOpacity>
+
+                    <Calendar
+                        // Ngày hiện tại của lịch
+                        current={departDay.toISOString().split('T')[0]}
+                        onDayPress={handleDateChange}
+                        markingType="period"
+                        markedDates={{
+                            [departDay.toISOString().split('T')[0]]: {
+                                startingDay: true,
+                                color: '#00BFFF',
+                                textColor: 'white'
+                            },
+                            [returnDay.toISOString().split('T')[0]]: {
+                                endingDay: true,
+                                color: '#00BFFF',
+                                textColor: 'white'
+                            },
+                            ...getIntermediateDates(departDay, returnDay)
+                        }}
+                    />
                 </View>
-            </Modal>
-        </SafeAreaView>
+            </View>
+        </Modal>
+    </SafeAreaView>
     );
 };
 
@@ -330,11 +218,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         textAlign: 'center',
-        marginLeft: '33%',
     },
     closeButton: {
         marginTop: 12,
-        marginLeft: 90,
         alignItems: 'center',
     },
     closeButtonText: {
