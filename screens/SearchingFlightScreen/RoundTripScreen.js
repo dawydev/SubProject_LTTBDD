@@ -23,13 +23,13 @@ const RoundTrip = () => {
     const toggleModalFrom = () => {
         setModalVisible(!isModalVisible);
     };
-
     const toggleModalTo = () => {
         setToModalVisible(!isToModalVisible);
     };
+    
+    
     const [isExpanded, setIsExpanded] = useState(false);
     
-
     // DATA MẪU LOCATION VÀ AIRPORT
     const sampleData = [
         { id: '1', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
@@ -38,7 +38,6 @@ const RoundTrip = () => {
         { id: '4', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
         { id: '5', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
         { id: '6', city: 'VietNam', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-
     ];
     const [visibleAirports, setVisibleAirports] = useState({});
 
@@ -48,16 +47,11 @@ const RoundTrip = () => {
             [id]: !prevState[id], // Toggle trạng thái hiển thị cho từng id riêng biệt
         }));
     };
-    //update from button place holder sau khi chọn location
-    const [fromCity, setFromCity] = useState('From');
-
     // Handle khi nhấn vào airport button
-    const handleAirportPress = (airport, city) => {
-    setFromCity(city); // Cập nhật city đã chọn
-    toggleModalFrom(); // Đóng modal sau khi chọn
-    console.log(`Selected airport: ${airport.name}`);
+    const handleAirportPress = (airport) => {
+        console.log(`Selected airport: ${airport.name}`);
+        // Thêm logic xử lý ở đây, chẳng hạn hiển thị chi tiết sân bay hoặc điều hướng
     };
-
     const handleLocationPress = (id) => {
         setSelectedLocationId(id);
         toggleAirports(id);
@@ -83,7 +77,6 @@ const RoundTrip = () => {
                     </View>
                 </TouchableOpacity>
             </View>
-
             {/* Dropdown list of airport buttons */}
             {visibleAirports[item.id] && (
                 item.airports?.length > 0 ? (
@@ -91,7 +84,7 @@ const RoundTrip = () => {
                         <TouchableOpacity 
                             key={airport.code || index} 
                             style={{ flexDirection: 'row', marginLeft: 60, paddingVertical: 10, alignItems: 'center', backgroundColor: 'white' }}
-                            onPress={() => handleAirportPress(airport, item.city)} // Gọi hàm khi nhấn vào airport button
+                            onPress={() => handleAirportPress(airport)} // Gọi hàm khi nhấn vào airport button
                         >
                             <MaterialCommunityIcons name="airplane" size={23} color="black" style={{ marginRight: 10 }} />
                             <View style={{flexDirection:'row'}}>
@@ -110,7 +103,7 @@ const RoundTrip = () => {
                 )
             )}
         </View>
-    );  
+    );
     
 
     return (
@@ -120,7 +113,7 @@ const RoundTrip = () => {
                 {/* From */}
                 <TouchableOpacity style={styles.flightFromButton} onPress={toggleModalFrom}>
                     <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.text}>{fromCity}</Text>
+                    <Text style={styles.text}>From</Text>
                 </TouchableOpacity>
 
                 {/* To */}
