@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
 
-// Định dạng ngày hôm nay với thứ viết tắt, tháng viết tắt và ngày
 const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+        return "Invalid date";
+    }
     return new Intl.DateTimeFormat('en-US', {
         weekday: 'short',
         month: 'short',
@@ -13,116 +16,97 @@ const formatDate = (date) => {
 };
 
 const RoundTrip = () => {
-    const [departDay, setDepartDay] = useState(formatDate(new Date()));
-    const [returnDay, setReturnDay] = useState(formatDate(new Date()));
+    const [departDay, setDepartDay] = useState(new Date());
+    const [returnDay, setReturnDay] = useState(new Date());
     const [isModalVisible, setModalVisible] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [isModalVisible2, setModalVisible2] = useState(false);
+    const [selectedDateType, setSelectedDateType] = useState('');
 
-    const sampleData = [
-        { id: '1', city: 'London, United Kingdom', airport1: 'London City Airport (LCY)', distance1: '20 km', airport2: 'Heathrow Airport (LHR)', distance2: '11 km' },
-        { id: '2', city: 'London, Ontario, Canada', airport1: '', distance1: '', airport2: '', distance2: '' },
-    ];
+    const toggleModal = () => setModalVisible(!isModalVisible);
+    const Daymodal = () => setModalVisible2(!isModalVisible2);
 
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
+    const handleDateChange = (day) => {
+        if (selectedDateType === 'depart') {
+            setDepartDay(new Date(day.dateString));
+            setSelectedDateType('return'); // Chuyển sang chọn ngày về
+        } else if (selectedDateType === 'return') {
+            setReturnDay(new Date(day.dateString));
+            setModalVisible2(false); // Đóng modal sau khi chọn ngày về
+        }
     };
 
-    const renderItem = ({ item }) => (
-        <View style={styles.locationItem}>
-            <Text style={styles.cityText}>{item.city}</Text>
-            <Text style={styles.subText}>Capital of {item.city.includes("United Kingdom") ? "England" : "Canada"}</Text>
-            {item.airport1 ? (
-                <View style={styles.airportContainer}>
-                    <Text style={styles.airportText}>{item.airport1}</Text>
-                    <Text style={styles.distanceText}>{item.distance1} to destination</Text>
-                </View>
-            ) : null}
-            {item.airport2 ? (
-                <View style={styles.airportContainer}>
-                    <Text style={styles.airportText}>{item.airport2}</Text>
-                    <Text style={styles.distanceText}>{item.distance2} to destination</Text>
-                </View>
-            ) : null}
-        </View>
-    );
+    // Hàm đánh dấu các ngày ở giữa ngày đi và về
+    const getIntermediateDates = (start, end) => {
+        if (!start || !end) return {};
+        const dates = {};
+        let currentDate = new Date(start);
+        const endDate = new Date(end);
+
+        while (currentDate < endDate) {
+            currentDate.setDate(currentDate.getDate() + 1);
+            const dateString = currentDate.toISOString().split('T')[0];
+            if (dateString !== end.toISOString().split('T')[0]) {
+                dates[dateString] = { color: '#B2EFFF', textColor: 'black' };
+            }
+        }
+        return dates;
+    };
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* From and To */}
             <View style={styles.fromToContainer}>
-                {/* From */}
                 <TouchableOpacity style={styles.flightFromButton} onPress={toggleModal}>
                     <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
                     <Text style={styles.text}>From</Text>
                 </TouchableOpacity>
-
-                {/* To */}
                 <TouchableOpacity style={styles.flightToButton}>
                     <MaterialCommunityIcons name="airplane-landing" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
                     <Text style={styles.text}>To</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Ngày đi và ngày về */}
             <View style={styles.dateContainer}>
-                {/* depart day */}
-                <TouchableOpacity style={styles.departDayButton}>
+                <TouchableOpacity style={styles.departDayButton} onPress={() => { setSelectedDateType('depart'); Daymodal(); }}>
                     <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.dateText}>{departDay}</Text>
+                    <Text style={styles.dateText}>{formatDate(departDay)}</Text>
                 </TouchableOpacity>
-
-                {/* return day */}
-                <TouchableOpacity style={styles.returnDayButton}>
+                <TouchableOpacity style={styles.returnDayButton} onPress={() => { setSelectedDateType('return'); Daymodal(); }}>
                     <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.dateText}>{returnDay}</Text>
+                    <Text style={styles.dateText}>{formatDate(returnDay)}</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Traveller and Cabin Class */}
-            <View style={styles.travelerCabinContainer}>
-                <TouchableOpacity style={styles.travelerCabinButton}>
-                    <MaterialCommunityIcons name="account" size={27} color="#757575" style={{ marginRight: 10, marginLeft: 40 }} />
-                    <Text style={{color:"black"}}>1 traveler</Text>
-                    <MaterialCommunityIcons name="rhombus-medium" size={10} color="#757575" style={{ marginRight: 10, marginLeft:10}} />
-                    <MaterialCommunityIcons name="seat-passenger" size={27} color="#757575" style={{ }} />
-                    <Text style={{color:"black", marginLeft:10}}>Economy</Text>
-                    <MaterialCommunityIcons name="chevron-down" size={27} color="#757575" style={{marginLeft:70}} />
-                </TouchableOpacity>
-            </View>
-
-            {/* Nút Search Flight */}
             <TouchableOpacity style={styles.searchFlightButton}>
                 <Text style={styles.searchFlightText}>Search Flight</Text>
             </TouchableOpacity>
 
-            {/* Modal */}
-            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+            <Modal visible={isModalVisible2} animationType="slide" transparent={true}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Where from?</Text>
-                        <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+                        <Text style={styles.modalTitle}>Select Dates</Text>
+                        <TouchableOpacity onPress={Daymodal} style={styles.closeButton}>
                             <Text style={styles.closeButtonText}>Close</Text>
                         </TouchableOpacity>
-                        <View style={styles.fromToContainer}>
-                            {/* From */}
-                            <TouchableOpacity style={styles.flightFromButton}>
-                                <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                                <Text style={styles.text}>From</Text>
-                            </TouchableOpacity>
 
-                            {/* To */}
-                            <TouchableOpacity style={styles.flightToButton}>
-                                <MaterialCommunityIcons name="airplane-landing" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                                <Text style={styles.text}>To</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        <FlatList
-                            data={sampleData}
-                            renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
+                        <Calendar
+                            // Ngày hiện tại của lịch
+                            current={departDay.toISOString().split('T')[0]}
+                            onDayPress={handleDateChange}
+                            markingType="period"
+                            markedDates={{
+                                [departDay.toISOString().split('T')[0]]: {
+                                    startingDay: true,
+                                    color: '#00BFFF',
+                                    textColor: 'white'
+                                },
+                                [returnDay.toISOString().split('T')[0]]: {
+                                    endingDay: true,
+                                    color: '#00BFFF',
+                                    textColor: 'white'
+                                },
+                                ...getIntermediateDates(departDay, returnDay)
+                            }}
                         />
-                        
                     </View>
                 </View>
             </Modal>

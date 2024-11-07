@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.3",
+    "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-picker/picker": "^2.8.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/material-top-tabs": "^6.6.14",
@@ -22,6 +23,7 @@
     "flightapp": "file:",
     "react": "18.2.0",
     "react-native": "0.74.5",
+    "react-native-calendars": "^1.1307.0",
     "react-native-elements": "^3.4.3",
     "react-native-pager-view": "^6.4.1",
     "react-native-paper": "^5.12.5",
