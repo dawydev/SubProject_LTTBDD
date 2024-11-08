@@ -19,6 +19,8 @@ const RoundTrip = () => {
     const [selectedLocationId, setSelectedLocationId] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isToModalVisible, setToModalVisible] = useState(false);
+    const [fromCity, setFromCity] = useState('From');
+    const [toCity, setToCity] = useState('To');
 
     const toggleModalFrom = () => {
         setModalVisible(!isModalVisible);
@@ -35,9 +37,6 @@ const RoundTrip = () => {
         { id: '1', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
         { id: '2', city: 'London, Ontario, Canada', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
         { id: '3', city: 'Viet Nam, Tan San Nhat', description: 'Ho Chi Minh City', airports: [{ name: 'Tan San Nhat', distance: '2,210 km', code:'TSN' }] },
-        { id: '4', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-        { id: '5', city: 'London, United Kingdom', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
-        { id: '6', city: 'VietNam', description: 'Capital of England', airports: [{ name: 'London City Airport', distance: '20 km', code:'LCY' }, { name: 'Heathrow Airport', distance: '11 km',code: 'LHR' }] },
     ];
     const [visibleAirports, setVisibleAirports] = useState({});
 
@@ -47,17 +46,30 @@ const RoundTrip = () => {
             [id]: !prevState[id], // Toggle trạng thái hiển thị cho từng id riêng biệt
         }));
     };
-    // Handle khi nhấn vào airport button
-    const handleAirportPress = (airport) => {
-        console.log(`Selected airport: ${airport.name}`);
-        // Thêm logic xử lý ở đây, chẳng hạn hiển thị chi tiết sân bay hoặc điều hướng
-    };
+    
     const handleLocationPress = (id) => {
         setSelectedLocationId(id);
         toggleAirports(id);
     };
 
-    const renderItem = ({ item }) => (
+    // Handle khi nhấn vào airport button
+    const handleAirportPressFrom = (airport, city) => {
+        setFromCity(city); // Cập nhật city đã chọn
+        toggleModalFrom(); // Đóng modal sau khi chọn
+        console.log(`Selected airport: ${airport.name}`);
+    };
+    const handleAirportPressTo = (airport, city) => {
+        setToCity(city); // Cập nhật city đã chọn
+        toggleModalTo(); // Đóng modal sau khi chọn
+        console.log(`Selected airport: ${airport.name}`);
+    };
+    const handleToAirportPress = (airport, city) => {
+        setToCity(city); // Cập nhật city đã chọn cho "To"
+        toggleModalTo(); // Đóng modal của "To"
+        console.log(`Selected airport for To: ${airport.name}`);
+    };
+
+    const renderItemFrom = ({ item }) => (
         <View style={styles.locationItem }>
             <View style={{ flexDirection: 'row', marginBottom: 10}}>
                 {/* Location button */}
@@ -84,7 +96,55 @@ const RoundTrip = () => {
                         <TouchableOpacity 
                             key={airport.code || index} 
                             style={{ flexDirection: 'row', marginLeft: 60, paddingVertical: 10, alignItems: 'center', backgroundColor: 'white' }}
-                            onPress={() => handleAirportPress(airport)} // Gọi hàm khi nhấn vào airport button
+                            onPress={() => handleAirportPressFrom(airport, item.city)} // Truyền thêm city
+                        >
+                            <MaterialCommunityIcons name="airplane" size={23} color="black" style={{ marginRight: 10 }} />
+                            <View style={{flexDirection:'row'}}>
+                                <View style={{width:'83%'}}>
+                                    <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{airport.name}</Text>
+                                    <Text style={{ fontSize: 13, color: '#A5AAAD', fontWeight: 'bold' }}>{airport.distance} to destination</Text>
+                                </View>
+                                <View>
+                                    <Text style={{ fontSize: 15, color: 'black', fontWeight: '600'}}>{airport.code}</Text>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    ))
+                ) : (
+                    <Text style={styles.noAirportText}>No airports available</Text>
+                )
+            )}
+        </View>
+);
+
+    const renderItemTo = ({ item }) => (
+        <View style={styles.locationItem }>
+            <View style={{ flexDirection: 'row', marginBottom: 10}}>
+                {/* Location button */}
+                <TouchableOpacity style={{backgroundColor: 'white', width:'100%'}} onPress={() => handleLocationPress(item.id)}>
+                    <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="map-marker" size={23} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+                        <View style={{ flexDirection: 'column', marginLeft: 10 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.city}</Text>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold', marginTop: 5, color: '#A5AAAD' }}>{item.description}</Text>
+                        </View>
+                        {/* Toggle icon */}
+                <AntDesign
+                    style={{marginLeft: 'auto'}}
+                    name={visibleAirports[item.id] ? "caretup" : "caretdown"} // Hiển thị caretup nếu mở, caretdown nếu đóng
+                    size={10}
+                />
+                    </View>
+                </TouchableOpacity>
+            </View>
+            {/* Dropdown list of airport buttons */}
+            {visibleAirports[item.id] && (
+                item.airports?.length > 0 ? (
+                    item.airports.map((airport, index) => (
+                        <TouchableOpacity 
+                            key={airport.code || index} 
+                            style={{ flexDirection: 'row', marginLeft: 60, paddingVertical: 10, alignItems: 'center', backgroundColor: 'white' }}
+                            onPress={() => handleAirportPressTo(airport, item.city)} // Truyền thêm city
                         >
                             <MaterialCommunityIcons name="airplane" size={23} color="black" style={{ marginRight: 10 }} />
                             <View style={{flexDirection:'row'}}>
@@ -104,7 +164,6 @@ const RoundTrip = () => {
             )}
         </View>
     );
-    
 
     return (
         <SafeAreaView style={styles.container}>
@@ -113,13 +172,13 @@ const RoundTrip = () => {
                 {/* From */}
                 <TouchableOpacity style={styles.flightFromButton} onPress={toggleModalFrom}>
                     <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.text}>From</Text>
+                    <Text style={styles.text}>{fromCity}</Text>
                 </TouchableOpacity>
 
                 {/* To */}
                 <TouchableOpacity style={styles.flightToButton} onPress={toggleModalTo}>
                     <MaterialCommunityIcons name="airplane-landing" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.text}>To</Text>
+                    <Text style={styles.text}>{toCity}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -179,7 +238,7 @@ const RoundTrip = () => {
                         <FlatList
                             style={{ width: '100%', height: '80%', marginTop: 10 }}
                             data={sampleData.filter(item => item.city.toLowerCase().includes(searchQuery.toLowerCase()))}
-                            renderItem={renderItem}
+                            renderItem={renderItemFrom}
                             keyExtractor={item => item.id}
                         />
                     </View>
@@ -210,7 +269,7 @@ const RoundTrip = () => {
                         <FlatList
                             style={{ width: '100%', height: '80%', marginTop: 10 }}
                             data={sampleData.filter(item => item.city.toLowerCase().includes(searchQuery.toLowerCase()))}
-                            renderItem={renderItem}
+                            renderItem ={renderItemTo}
                             keyExtractor={item => item.id}
                         />
                     </View>
