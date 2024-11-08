@@ -3,8 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
+
 // Định dạng ngày hôm nay với thứ viết tắt, tháng viết tắt và ngày
 const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+        return "Invalid date";
+    }
     return new Intl.DateTimeFormat('en-US', {
         weekday: 'short',
         month: 'short',
@@ -17,13 +22,13 @@ const RoundTrip = () => {
     const [returnDay, setReturnDay] = useState(formatDate(new Date()));
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLocationId, setSelectedLocationId] = useState(null);
-    const [isModalVisible, setModalVisible] = useState(false);
+    const [isFromModalVisible, setFromModalVisible] = useState(false);
     const [isToModalVisible, setToModalVisible] = useState(false);
     const [fromCity, setFromCity] = useState('From');
     const [toCity, setToCity] = useState('To');
 
     const toggleModalFrom = () => {
-        setModalVisible(!isModalVisible);
+        setFromModalVisible(!isFromModalVisible);
     };
     const toggleModalTo = () => {
         setToModalVisible(!isToModalVisible);
@@ -215,7 +220,7 @@ const RoundTrip = () => {
             </TouchableOpacity>
 
             {/* "Where From" Modal */}
-            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+            <Modal visible={isFromModalVisible} animationType="slide" transparent={true}>
             <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
