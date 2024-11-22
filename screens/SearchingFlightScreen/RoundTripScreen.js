@@ -18,12 +18,16 @@ const formatDate = (date) => {
 };
 
 const RoundTrip = () => {
-    const [departDay, setDepartDay] = useState(formatDate(new Date()));
-    const [returnDay, setReturnDay] = useState(formatDate(new Date()));
+    const [departDay, setDepartDay] = useState(new Date());
+    const [returnDay, setReturnDay] = useState(new Date());
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLocationId, setSelectedLocationId] = useState(null);
+
     const [isFromModalVisible, setFromModalVisible] = useState(false);
     const [isToModalVisible, setToModalVisible] = useState(false);
+
+    const [isModalVisible2, setModalVisible2] = useState(false);
+    const [selectedDateType, setSelectedDateType] = useState('');
     const [fromCity, setFromCity] = useState('From');
     const [toCity, setToCity] = useState('To');
 
@@ -33,9 +37,9 @@ const RoundTrip = () => {
     const toggleModalTo = () => {
         setToModalVisible(!isToModalVisible);
     };
+    const Daymodal = () => setModalVisible2(!isModalVisible2);
+
     
-    
-    const [isExpanded, setIsExpanded] = useState(false);
     
     // DATA MẪU LOCATION VÀ AIRPORT
     const sampleData = [
@@ -73,7 +77,32 @@ const RoundTrip = () => {
         toggleModalTo(); // Đóng modal của "To"
         console.log(`Selected airport for To: ${airport.name}`);
     };
+    const handleDateChange = (day) => {
+        if (selectedDateType === 'depart') {
+            setDepartDay(new Date(day.dateString));
+            setSelectedDateType('return'); // Chuyển sang chọn ngày về
+        } else if (selectedDateType === 'return') {
+            setReturnDay(new Date(day.dateString));
+            setModalVisible2(false); // Đóng modal sau khi chọn ngày về
+        }
+    };
 
+    // Hàm đánh dấu các ngày ở giữa ngày đi và về
+    const getIntermediateDates = (start, end) => {
+        if (!start || !end) return {};
+        const dates = {};
+        let currentDate = new Date(start);
+        const endDate = new Date(end);
+
+        while (currentDate < endDate) {
+            currentDate.setDate(currentDate.getDate() + 1);
+            const dateString = currentDate.toISOString().split('T')[0];
+            if (dateString !== end.toISOString().split('T')[0]) {
+                dates[dateString] = { color: '#B2EFFF', textColor: 'black' };
+            }
+        }
+        return dates;
+    };
     const renderItemFrom = ({ item }) => (
         <View style={styles.locationItem }>
             <View style={{ flexDirection: 'row', marginBottom: 10}}>
@@ -189,16 +218,13 @@ const RoundTrip = () => {
 
             {/* Ngày đi và ngày về */}
             <View style={styles.dateContainer}>
-                {/* depart day */}
-                <TouchableOpacity style={styles.departDayButton}>
+                <TouchableOpacity style={styles.departDayButton} onPress={() => { setSelectedDateType('depart'); Daymodal(); }}>
                     <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.dateText}>{departDay}</Text>
+                    <Text style={styles.dateText}>{formatDate(departDay)}</Text>
                 </TouchableOpacity>
-
-                {/* return day */}
-                <TouchableOpacity style={styles.returnDayButton}>
+                <TouchableOpacity style={styles.returnDayButton} onPress={() => { setSelectedDateType('return'); Daymodal(); }}>
                     <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
-                    <Text style={styles.dateText}>{returnDay}</Text>
+                    <Text style={styles.dateText}>{formatDate(returnDay)}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -280,6 +306,41 @@ const RoundTrip = () => {
                     </View>
                 </View>
             </Modal>
+
+            {/* Date Picker Modal */}
+
+            <Modal visible={isModalVisible2} animationType="slide" transparent={true}>
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Select Dates</Text>
+                    <TouchableOpacity onPress={Daymodal} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>Close</Text>
+                    </TouchableOpacity>
+
+                    <Calendar
+                        // Ngày hiện tại của lịch
+                        current={departDay.toISOString().split('T')[0]}
+                        onDayPress={handleDateChange}
+                        markingType="period"
+                        markedDates={{
+                            [departDay.toISOString().split('T')[0]]: {
+                                startingDay: true,
+                                color: '#00BFFF',
+                                textColor: 'white'
+                            },
+                            [returnDay.toISOString().split('T')[0]]: {
+                                endingDay: true,
+                                color: '#00BFFF',
+                                textColor: 'white'
+                            },
+                            ...getIntermediateDates(departDay, returnDay)
+                        }}
+                    />
+                </View>
+            </View>
+        </Modal>
+
+
         </SafeAreaView>
     );
 };
