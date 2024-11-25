@@ -28,6 +28,7 @@ const RoundTrip = () => {
       });
     const [isFromModalVisible, setFromModalVisible] = useState(false);
     const [isToModalVisible, setToModalVisible] = useState(false);
+    const [isOptionModalVisible, setOptionModalVisible] = useState(false);
     const [isDatePickerModalVisible, setDatePickerModalVisible] = useState(false);
     const [isModalVisible2, setModalVisible2] = useState(false);
     const [selectedDateType, setSelectedDateType] = useState('');
@@ -44,8 +45,13 @@ const RoundTrip = () => {
         setDatePickerModalVisible(!isDatePickerModalVisible); // Chuyển trạng thái DatePicker nếu cần
       };
     const Daymodal = () => setModalVisible2(!isModalVisible2);
-
-    
+    const toggleModalOptional = () => {
+        setOptionModalVisible(!isOptionModalVisible);
+    };
+    const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
+    const [infants, setInfants] = useState(0);
+    const [selectedCabin, setSelectedCabin] = useState('Economy');
     
     // DATA MẪU LOCATION VÀ AIRPORT
     const sampleData = [
@@ -254,9 +260,9 @@ const RoundTrip = () => {
                 </TouchableOpacity>
             </View>
 
-            {/* Traveller and Cabin Class */}
+            {/* Options Button*/}
             <View style={styles.travelerCabinContainer}>
-                <TouchableOpacity style={styles.travelerCabinButton}>
+                <TouchableOpacity style={styles.travelerCabinButton} onPress={toggleModalOptional}>
                     <MaterialCommunityIcons name="account" size={27} color="#757575" style={{ marginRight: 10, marginLeft: 40 }} />
                     <Text style={{color:"black"}}>1 traveler</Text>
                     <MaterialCommunityIcons name="rhombus-medium" size={10} color="#757575" style={{ marginRight: 10, marginLeft:10}} />
@@ -286,7 +292,7 @@ const RoundTrip = () => {
                                 <MaterialCommunityIcons name="airplane-takeoff" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
                                 <TextInput
                                     style={{ backgroundColor: '#F3F4F6', width: '80%', height: 50 }}
-                                    value={searchQuery}
+                                    value={searchQuery} 
                                     onChangeText={setSearchQuery}
                                     placeholder='Find the place'
                                 />
@@ -374,6 +380,118 @@ const RoundTrip = () => {
                         <Text style={styles.doneButtonText}>Done</Text>
                         </TouchableOpacity>
                     </View>
+                    </View>
+                </View>
+            </Modal>
+
+        {/*  Modal Option */}
+        <Modal visible={isOptionModalVisible} animationType="slide" transparent={true}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        {/* Header */}
+                        <View style={styles.header}>
+                            <Text style={styles.modalTitle}>Options</Text>
+                            <TouchableOpacity onPress={toggleModalOptional}>
+                                <MaterialCommunityIcons name="close" size={24} color="#919398" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Traveller Section */}
+                        <Text style={styles.sectionTitle}>Traveller</Text>
+                        <View style={styles.row}>
+                            <View style={{flexDirection: 'column', flex:1}}>
+                            <Text style={styles.label}>Adults</Text>
+                            <Text style={styles.sublabel}>12+ years</Text>
+                            </View>
+                            <View style={styles.counter}>
+                                <TouchableOpacity
+                                    onPress={() => setAdults(Math.max(0, adults - 1))}
+                                    style={styles.counterButton}
+                                >
+                                    <MaterialCommunityIcons name="minus" size={20} color="#757575" />
+                                </TouchableOpacity>
+                                <Text>{adults}</Text>
+                                <TouchableOpacity
+                                    onPress={() => setAdults(adults + 1)}
+                                    style={styles.counterButton}
+                                >
+                                    <MaterialCommunityIcons name="plus" size={20} color="#757575" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.row}>
+                            <View style={{flexDirection: 'column', flex:1}}>
+                                <Text style={styles.label}>Children</Text>
+                                <Text style={styles.sublabel}>2-12 years</Text>
+                            </View>
+                            <View style={styles.counter}>
+                                <TouchableOpacity
+                                    onPress={() => setChildren(Math.max(0, children - 1))}
+                                    style={styles.counterButton}
+                                >
+                                    <MaterialCommunityIcons name="minus" size={20} color="#757575" />
+                                </TouchableOpacity>
+                                <Text>{children}</Text>
+                                <TouchableOpacity
+                                    onPress={() => setChildren(children + 1)}
+                                    style={styles.counterButton}
+                                >
+                                    <MaterialCommunityIcons name="plus" size={20} color="#757575" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.row}>
+                            <View style={{flexDirection: 'column', flex:1}}>
+                                <Text style={styles.label}>Infants</Text>
+                                <Text style={styles.sublabel}>Under 2 years</Text>
+                            </View>
+                            <View style={styles.counter}>
+                                <TouchableOpacity
+                                    onPress={() => setInfants(Math.max(0, infants - 1))}
+                                    style={styles.counterButton}
+                                >
+                                    <MaterialCommunityIcons name="minus" size={20} color="#757575" />
+                                </TouchableOpacity>
+                                <Text>{infants}</Text>
+                                <TouchableOpacity
+                                    onPress={() => setInfants(infants + 1)}
+                                    style={styles.counterButton}
+                                >
+                                    <MaterialCommunityIcons name="plus" size={20} color="#757575" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {/* Cabin Class Section */}
+                        <Text style={styles.sectionTitle}>Cabin Class</Text>
+                        {['Economy', 'Premium Economy', 'Business', 'First'].map((cabin) => (
+                            <TouchableOpacity
+                                key={cabin}
+                                style={styles.cabinOption}
+                                onPress={() => setSelectedCabin(cabin)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.cabinText,
+                                        selectedCabin === cabin && styles.selectedCabinText,
+                                    ]}
+                                >
+                                    {cabin}
+                                </Text>
+                                {selectedCabin === cabin && (
+                                    <MaterialCommunityIcons
+                                        name="check"
+                                        size={20}
+                                        color="#000"
+                                    />
+                                )}
+                            </TouchableOpacity>
+                        ))}
+
+                        {/* Done Button */}
+                        <TouchableOpacity style={styles.doneButton} onPress={toggleModalOptional}>
+                            <Text style={styles.doneButtonText}>Done</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -475,11 +593,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        height: '70%',
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        width: '100%',
-        alignItems: 'center',
+        alignSelf: 'stretch', // Đảm bảo modal kéo dãn đủ chiều ngang
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '100%', // Giới hạn chiều cao tối đa
+    flexShrink: 1, // Cho phép modal tự co lại nếu nội dung nhỏ
     },
     modalTitle: {
         marginTop: 10,
@@ -541,6 +661,61 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 20,
       },
+      sectionTitle: {
+        fontSize: 23,
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    label: {
+        fontSize: 16,
+        
+    },
+    sublabel: {
+        fontSize: 12,
+        color: '#757575',
+    },
+    counter: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    counterButton: {
+        paddingHorizontal: 10,
+    },
+    cabinOption: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+    },
+    cabinText: {
+        fontSize: 16,
+    },
+    selectedCabinText: {
+        fontWeight: 'bold',
+    },
+    doneButton: {
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+        marginTop: 20,
+    },
+    doneButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
 
 export default RoundTrip;
