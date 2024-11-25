@@ -22,21 +22,27 @@ const RoundTrip = () => {
     const [returnDay, setReturnDay] = useState(new Date());
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLocationId, setSelectedLocationId] = useState(null);
-
+    const [selectedRange, setSelectedRange] = useState({
+        startDate: null,
+        endDate: null,
+      });
     const [isFromModalVisible, setFromModalVisible] = useState(false);
     const [isToModalVisible, setToModalVisible] = useState(false);
-
+    const [isDatePickerModalVisible, setDatePickerModalVisible] = useState(false);
     const [isModalVisible2, setModalVisible2] = useState(false);
     const [selectedDateType, setSelectedDateType] = useState('');
     const [fromCity, setFromCity] = useState('From');
     const [toCity, setToCity] = useState('To');
-
     const toggleModalFrom = () => {
         setFromModalVisible(!isFromModalVisible);
     };
     const toggleModalTo = () => {
         setToModalVisible(!isToModalVisible);
     };
+    const toggleModalDatePicker = () => {
+        setModalVisible2(false); // Đóng Modal 2
+        setDatePickerModalVisible(!isDatePickerModalVisible); // Chuyển trạng thái DatePicker nếu cần
+      };
     const Daymodal = () => setModalVisible2(!isModalVisible2);
 
     
@@ -87,22 +93,42 @@ const RoundTrip = () => {
         }
     };
 
-    // Hàm đánh dấu các ngày ở giữa ngày đi và về
-    const getIntermediateDates = (start, end) => {
-        if (!start || !end) return {};
-        const dates = {};
-        let currentDate = new Date(start);
-        const endDate = new Date(end);
-
-        while (currentDate < endDate) {
-            currentDate.setDate(currentDate.getDate() + 1);
-            const dateString = currentDate.toISOString().split('T')[0];
-            if (dateString !== end.toISOString().split('T')[0]) {
-                dates[dateString] = { color: '#B2EFFF', textColor: 'black' };
-            }
+    // Đánh dấu ngày được chọn trên lịch
+    const onDayPress = (day) => {
+        if (!selectedRange.startDate || selectedRange.endDate) {
+          setSelectedRange({ startDate: day.dateString, endDate: null });
+        } else {
+          setSelectedRange((prev) => ({
+            ...prev,
+            endDate: day.dateString,
+          }));
         }
-        return dates;
+      };
+      const markedDates = {};
+  if (selectedRange.startDate) {
+    markedDates[selectedRange.startDate] = {
+      startingDay: true,
+      color: '#00adf5',
+      textColor: 'white',
     };
+  }
+  if (selectedRange.endDate) {
+    markedDates[selectedRange.endDate] = {
+      endingDay: true,
+      color: '#00adf5',
+      textColor: 'white',
+    };
+    // Highlight days between
+    let start = new Date(selectedRange.startDate);
+    let end = new Date(selectedRange.endDate);
+    while (start < end) {
+      start.setDate(start.getDate() + 1);
+      const dateString = start.toISOString().split('T')[0];
+      if (dateString !== selectedRange.endDate) {
+        markedDates[dateString] = { color: '#bde0fe', textColor: 'black' };
+      }
+    }
+  }
     const renderItemFrom = ({ item }) => (
         <View style={styles.locationItem }>
             <View style={{ flexDirection: 'row', marginBottom: 10}}>
@@ -310,37 +336,47 @@ const RoundTrip = () => {
             {/* Date Picker Modal */}
 
             <Modal visible={isModalVisible2} animationType="slide" transparent={true}>
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Select Dates</Text>
-                    <TouchableOpacity onPress={Daymodal} style={styles.closeButton}>
-                        <Text style={styles.closeButtonText}>Close</Text>
-                    </TouchableOpacity>
-
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                        <Text style={styles.modalTitle}>Date</Text>
+                        <TouchableOpacity onPress={() => setModalVisible2(false)} style={styles.closeButton}>
+                        <MaterialCommunityIcons name="close" size={27} color="#919398" />
+                        </TouchableOpacity>
+                    </View>
                     <Calendar
-                        // Ngày hiện tại của lịch
-                        current={departDay.toISOString().split('T')[0]}
-                        onDayPress={handleDateChange}
-                        markingType="period"
-                        markedDates={{
-                            [departDay.toISOString().split('T')[0]]: {
-                                startingDay: true,
-                                color: '#00BFFF',
-                                textColor: 'white'
-                            },
-                            [returnDay.toISOString().split('T')[0]]: {
-                                endingDay: true,
-                                color: '#00BFFF',
-                                textColor: 'white'
-                            },
-                            ...getIntermediateDates(departDay, returnDay)
+                        style={styles.calendar}
+                        theme={{
+                        backgroundColor: '#ffffff',
+                        calendarBackground: '#f8f9fa',
+                        textSectionTitleColor: '#b6c1cd',
+                        selectedDayBackgroundColor: '#00adf5',
+                        selectedDayTextColor: '#ffffff',
+                        todayTextColor: '#00adf5',
+                        dayTextColor: '#2d4150',
+                        textDisabledColor: '#d9e1e8',
+                        dotColor: '#00adf5',
+                        selectedDotColor: '#ffffff',
+                        arrowColor: '#00adf5',
+                        disabledArrowColor: '#d9e1e8',
+                        monthTextColor: '#2d4150',
+                        indicatorColor: '#00adf5',
                         }}
+                        markingType="period"
+                        markedDates={markedDates}
+                        onDayPress={onDayPress}
                     />
+                    <View style={styles.footer}>
+                        <View>
+                        <Text style={{ fontWeight: '500' }}>Round-Trip</Text>
+                        </View>
+                        <TouchableOpacity style={styles.doneButton} onPress={() => setModalVisible2(false)}>
+                        <Text style={styles.doneButtonText}>Done</Text>
+                        </TouchableOpacity>
+                    </View>
+                    </View>
                 </View>
-            </View>
-        </Modal>
-
-
+            </Modal>
         </SafeAreaView>
     );
 };
@@ -478,6 +514,33 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#E0E0E0',
     },
+    doneButton: {
+        width: '40%',
+        backgroundColor: '#00BDD5',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+
+      },
+      doneButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    
+    },
+      footer: {
+        marginTop: 20,
+        width: '70%',
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      },
+      calendar: {
+        borderRadius: 10,
+        width: '100%',
+        marginBottom: 20,
+      },
 });
 
 export default RoundTrip;
