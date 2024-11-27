@@ -52,6 +52,7 @@ const RoundTrip = () => {
     const [children, setChildren] = useState(0);
     const [infants, setInfants] = useState(0);
     const [selectedCabin, setSelectedCabin] = useState('Economy');
+    const [travellersText, setTravellersText] = useState('1 traveler');
     
     // DATA MẪU LOCATION VÀ AIRPORT
     const sampleData = [
@@ -98,43 +99,51 @@ const RoundTrip = () => {
             setModalVisible2(false); // Đóng modal sau khi chọn ngày về
         }
     };
-
+    const handleDone = () => {
+        const totalTravellers = adults + children + infants;
+        setTravellersText(`${totalTravellers} traveler${totalTravellers > 1 ? 's' : ''}`);
+        toggleModalOptional();
+    };
     // Đánh dấu ngày được chọn trên lịch
     const onDayPress = (day) => {
         if (!selectedRange.startDate || selectedRange.endDate) {
-          setSelectedRange({ startDate: day.dateString, endDate: null });
+            // Khi không có startDate hoặc đã chọn xong endDate
+            setSelectedRange({ startDate: day.dateString, endDate: null });
+            setDepartDay(new Date(day.dateString)); // Cập nhật ngày đi
         } else {
-          setSelectedRange((prev) => ({
-            ...prev,
-            endDate: day.dateString,
-          }));
+            // Khi startDate đã có, chọn endDate
+            setSelectedRange((prev) => ({
+                ...prev,
+                endDate: day.dateString,
+            }));
+            setReturnDay(new Date(day.dateString)); // Cập nhật ngày về
         }
-      };
-      const markedDates = {};
-  if (selectedRange.startDate) {
-    markedDates[selectedRange.startDate] = {
-      startingDay: true,
-      color: '#00adf5',
-      textColor: 'white',
     };
-  }
-  if (selectedRange.endDate) {
-    markedDates[selectedRange.endDate] = {
-      endingDay: true,
-      color: '#00adf5',
-      textColor: 'white',
-    };
-    // Highlight days between
-    let start = new Date(selectedRange.startDate);
-    let end = new Date(selectedRange.endDate);
-    while (start < end) {
-      start.setDate(start.getDate() + 1);
-      const dateString = start.toISOString().split('T')[0];
-      if (dateString !== selectedRange.endDate) {
-        markedDates[dateString] = { color: '#bde0fe', textColor: 'black' };
-      }
+        const markedDates = {};
+    if (selectedRange.startDate) {
+        markedDates[selectedRange.startDate] = {
+            startingDay: true,
+            color: '#00adf5',
+            textColor: 'white',
+        };
     }
-  }
+    if (selectedRange.endDate) {
+        markedDates[selectedRange.endDate] = {
+            endingDay: true,
+            color: '#00adf5',
+            textColor: 'white',
+        };
+        // Đánh dấu các ngày giữa startDate và endDate
+        let start = new Date(selectedRange.startDate);
+        let end = new Date(selectedRange.endDate);
+        while (start < end) {
+            start.setDate(start.getDate() + 1);
+            const dateString = start.toISOString().split('T')[0];
+            if (dateString !== selectedRange.endDate) {
+                markedDates[dateString] = { color: '#bde0fe', textColor: 'black' };
+            }
+        }
+    }
     const renderItemFrom = ({ item }) => (
         <View style={styles.locationItem }>
             <View style={{ flexDirection: 'row', marginBottom: 10}}>
@@ -250,27 +259,78 @@ const RoundTrip = () => {
 
             {/* Ngày đi và ngày về */}
             <View style={styles.dateContainer}>
-                <TouchableOpacity style={styles.departDayButton} onPress={() => { setSelectedDateType('depart'); Daymodal(); }}>
-                    <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+                {/* Button Ngày đi */}
+                <TouchableOpacity
+                    style={styles.departDayButton}
+                    onPress={() => {
+                        setSelectedDateType('depart');
+                        Daymodal();
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="calendar-month-outline"
+                        size={27}
+                        color="black"
+                        style={{ marginRight: 10, marginLeft: 10 }}
+                    />
                     <Text style={styles.dateText}>{formatDate(departDay)}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.returnDayButton} onPress={() => { setSelectedDateType('return'); Daymodal(); }}>
-                    <MaterialCommunityIcons name="calendar-month-outline" size={27} color="black" style={{ marginRight: 10, marginLeft: 10 }} />
+
+                {/* Button Ngày về */}
+                <TouchableOpacity
+                    style={styles.returnDayButton}
+                    onPress={() => {
+                        setSelectedDateType('return');
+                        Daymodal();
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="calendar-month-outline"
+                        size={27}
+                        color="black"
+                        style={{ marginRight: 10, marginLeft: 10 }}
+                    />
                     <Text style={styles.dateText}>{formatDate(returnDay)}</Text>
                 </TouchableOpacity>
             </View>
 
             {/* Options Button*/}
-            <View style={styles.travelerCabinContainer}>
-                <TouchableOpacity style={styles.travelerCabinButton} onPress={toggleModalOptional}>
-                    <MaterialCommunityIcons name="account" size={27} color="#757575" style={{ marginRight: 10, marginLeft: 40 }} />
-                    <Text style={{color:"black"}}>1 traveler</Text>
-                    <MaterialCommunityIcons name="rhombus-medium" size={10} color="#757575" style={{ marginRight: 10, marginLeft:10}} />
-                    <MaterialCommunityIcons name="seat-passenger" size={27} color="#757575" style={{ }} />
-                    <Text style={{color:"black", marginLeft:10}}>Economy</Text>
-                    <MaterialCommunityIcons name="chevron-down" size={27} color="#757575" style={{marginLeft:70}} />
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={styles.travelerCabinButton} onPress={toggleModalOptional}>
+                {/* Icon thay đổi theo số lượng travellers */}
+                <MaterialCommunityIcons
+                    name={
+                        adults + children + infants > 2
+                            ? "account-group" // > 2 travellers
+                            : adults + children + infants === 2
+                            ? "account-multiple" // 2 travellers
+                            : "account" // <= 1 traveller
+                    }
+                    size={27}
+                    color="#757575"
+                    style={{ marginRight: 10, marginLeft: 40 }}
+                />
+                <Text style={{ color: "black" }}>{travellersText}</Text>
+
+                <MaterialCommunityIcons name="rhombus-medium" size={10} color="#757575" style={{ marginRight: 10, marginLeft: 10 }} />
+
+                {/* Icon thay đổi theo Cabin Class */}
+                <MaterialCommunityIcons
+                    name={
+                        selectedCabin === "Economy"
+                            ? "seat-passenger"
+                            : selectedCabin === "Premium Economy"
+                            ? "seat-passenger"
+                            : selectedCabin === "Business"
+                            ? "briefcase-outline"
+                            : "star-outline" // First Class
+                    }
+                    size={27}
+                    color="#757575"
+                />
+                <Text style={{ color: "black", marginLeft: 10 }}>{selectedCabin}</Text>
+
+                <MaterialCommunityIcons name="chevron-down" size={27} color="#757575" style={{ marginLeft: 70 }} />
+            </TouchableOpacity>
 
             {/* Nút Search Flight */}
             <TouchableOpacity style={styles.searchFlightButton}>
@@ -340,7 +400,6 @@ const RoundTrip = () => {
             </Modal>
 
             {/* Date Picker Modal */}
-
             <Modal visible={isModalVisible2} animationType="slide" transparent={true}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -376,9 +435,14 @@ const RoundTrip = () => {
                         <View>
                         <Text style={{ fontWeight: '500' }}>Round-Trip</Text>
                         </View>
-                        <TouchableOpacity style={styles.doneButton} onPress={() => setModalVisible2(false)}>
-                        <Text style={styles.doneButtonText}>Done</Text>
-                        </TouchableOpacity>
+                        <TouchableOpacity
+                    style={styles.doneButton}
+                    onPress={() => {
+                        setModalVisible2(false); // Đóng modal
+                    }}
+                >
+                    <Text style={styles.doneButtonText}>Done</Text>
+                </TouchableOpacity>
                     </View>
                     </View>
                 </View>
@@ -389,8 +453,8 @@ const RoundTrip = () => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         {/* Header */}
-                        <View style={styles.header}>
-                            <Text style={styles.modalTitle}>Options</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <Text style={styles.modalTitle}>Options</Text>
                             <TouchableOpacity onPress={toggleModalOptional}>
                                 <MaterialCommunityIcons name="close" size={24} color="#919398" />
                             </TouchableOpacity>
@@ -488,12 +552,12 @@ const RoundTrip = () => {
                             </TouchableOpacity>
                         ))}
 
-                        {/* Done Button */}
-                        <TouchableOpacity style={styles.doneButton} onPress={toggleModalOptional}>
-                            <Text style={styles.doneButtonText}>Done</Text>
-                        </TouchableOpacity>
+                            {/* Done Button */}
+                            <TouchableOpacity style={styles.doneButtonOptions} onPress={handleDone}>
+                                <Text style={styles.doneButtonText}>Done</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
             </Modal>
         </SafeAreaView>
     );
@@ -562,6 +626,7 @@ const styles = StyleSheet.create({
         marginTop: 50,
     },
     travelerCabinButton: {
+        marginTop: 40,
         flexDirection: 'row',
         height: 50,
         width: "100%",
@@ -593,7 +658,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        alignSelf: 'stretch', // Đảm bảo modal kéo dãn đủ chiều ngang
+    alignSelf: 'stretch', // Đảm bảo modal kéo dãn đủ chiều ngang
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -606,7 +671,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         textAlign: 'center',
-        marginLeft: '33%',
+        marginLeft: '37%',
     },
     closeButton: {
         marginTop: 12,
@@ -699,12 +764,13 @@ const styles = StyleSheet.create({
     },
     cabinText: {
         fontSize: 16,
+        fontWeight: '300',
     },
     selectedCabinText: {
         fontWeight: 'bold',
     },
-    doneButton: {
-        backgroundColor: '#007bff',
+    doneButtonOptions: {
+        backgroundColor: '#00BDD5',
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',

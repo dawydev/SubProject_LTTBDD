@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/react-native": "^5.2.3",
+    "@expo/metro-runtime": "~4.0.0",
     "@expo/vector-icons": "^14.0.3",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-picker/picker": "2.9.0",
@@ -23,6 +24,7 @@
     "expo-status-bar": "~2.0.0",
     "flightapp": "file:",
     "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-native": "0.76.2",
     "react-native-calendars": "^1.1307.0",
     "react-native-elements": "^3.4.3",
@@ -32,7 +34,8 @@
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.1.0",
     "react-native-tab-view": "^3.5.2",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-web": "~0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
