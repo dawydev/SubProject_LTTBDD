@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
+import SearchResultScreen from '../SearchResultScreen/SearchResultScreen.js';
 
 // Định dạng ngày hôm nay với thứ viết tắt, tháng viết tắt và ngày
 const formatDate = (date) => {
@@ -18,6 +20,7 @@ const formatDate = (date) => {
 };
 
 const RoundTrip = () => {
+    const navigation = useNavigation();
     const [departDay, setDepartDay] = useState(new Date());
     const [returnDay, setReturnDay] = useState(new Date());
     const [searchQuery, setSearchQuery] = useState('');
@@ -333,7 +336,21 @@ const RoundTrip = () => {
             </TouchableOpacity>
 
             {/* Nút Search Flight */}
-            <TouchableOpacity style={styles.searchFlightButton}>
+            <TouchableOpacity
+                style={styles.searchFlightButton}
+                onPress={() =>
+                    navigation.navigate('SearchResultScreen', {
+                        fromCity,
+                        toCity,
+                        departDay,
+                        returnDay,
+                        adults,
+                        children,
+                        infants,
+                        selectedCabin,
+                    })
+                }
+            >
                 <Text style={styles.searchFlightText}>Search Flight</Text>
             </TouchableOpacity>
 
