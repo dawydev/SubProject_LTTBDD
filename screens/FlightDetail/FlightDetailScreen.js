@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -17,12 +17,14 @@ const formatDate = (date) => {
 const FlightDetailScreen = ({ route }) => {
   const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants } = route.params;
   const navigation = useNavigation();
+  const [showFeatures, setShowFeatures] = useState(false); // State để quản lý việc hiển thị tiện ích
+
 
   const formattedDepartDay = formatDate(new Date(departDay)); // Định dạng ngày đi
   const formattedReturnDay = formatDate(new Date(returnDay)); // Định dạng ngày về
 
   // Hàm dùng để hiển thị thông tin chuyến bay (có thể dùng cho cả chuyến đi và chuyến về)
-  const renderFlightInfo = (title, flightDetails, date) => (
+  const renderFlightInfo = (title, flightDetails, date, flightId) => (
     <View style={styles.flightSection}>
       {/* Tiêu đề chuyến bay (ví dụ: "Departure Flight" hoặc "Return Flight") */}
       <Text style={styles.flightTitle}>{title}</Text>
@@ -30,40 +32,57 @@ const FlightDetailScreen = ({ route }) => {
       {/* Thông tin tuyến đường và thời gian bay */}
       <View style={styles.flightRow}>
         <Text style={styles.flightRoute}>
-          {flightDetails.fromCode} → {flightDetails.toCode}
+        {flightDetails.departTime}        
         </Text>
-        <Text style={styles.flightDuration}>
-          {flightDetails.stops} {flightDetails.duration}
+        {/* Duration & stop */}
+        <View style={{flexDirection: 'column'}}>
+            <Text style={styles.flightDuration}>
+            {flightDetails.stops} 
+            </Text>
+            <Text style={styles.flightDuration}>
+            {flightDetails.duration}
+            </Text>
+        </View>
+        <Text style={styles.flightRoute}>
+            {flightDetails.arriveTime}
         </Text>
+        
       </View>
 
       {/* Giờ khởi hành, giờ đến và ngày bay */}
       <View style={styles.flightRow}>
-        <Text style={styles.flightTime}>
-          {flightDetails.departTime} → {flightDetails.arriveTime}
-        </Text>
-        <Text style={styles.flightDate}>{date}</Text>
+        <Text style={styles.flightDate}>{formattedDepartDay}</Text>
+        <Text style={styles.flightDate}>{formattedReturnDay}</Text>
       </View>
 
+     {/* Nút More Info / Less Info */}
+     <TouchableOpacity onPress={() => setShowFeatures(prev => ({ ...prev, [flightId]: !prev[flightId] }))} style={styles.moreInfoButtonContainer}>
+        <Text style={styles.moreInfoButton}>
+          {showFeatures[flightId] ? "Less Info" : "More Info"}
+        </Text>
+      </TouchableOpacity>
+
       {/* Các tiện ích của chuyến bay */}
-      <View style={styles.flightFeatures}>
-        <View style={styles.feature}>
-          <MaterialCommunityIcons name="seat-recline-extra" size={18} color="#000" />
-          <Text style={styles.featureText}>28" seat pitch</Text>
+      {showFeatures[flightId] && (
+        <View style={styles.flightFeatures}>
+          <View style={styles.feature}>
+            <MaterialCommunityIcons name="seat-recline-extra" size={18} color="#000" />
+            <Text style={styles.featureText}>28" seat pitch</Text>
+          </View>
+          <View style={styles.feature}>
+            <FontAwesome name="cutlery" size={18} color="#000" />
+            <Text style={styles.featureText}>Light meal</Text>
+          </View>
+          <View style={styles.feature}>
+            <MaterialCommunityIcons name="wifi" size={18} color="#000" />
+            <Text style={styles.featureText}>Chance of WiFi</Text>
+          </View>
+          <View style={styles.feature}>
+            <MaterialCommunityIcons name="power-plug-off" size={18} color="#000" />
+            <Text style={styles.featureText}>No power outlet</Text>
+          </View>
         </View>
-        <View style={styles.feature}>
-          <FontAwesome name="cutlery" size={18} color="#000" />
-          <Text style={styles.featureText}>Light meal</Text>
-        </View>
-        <View style={styles.feature}>
-          <MaterialCommunityIcons name="wifi" size={18} color="#000" />
-          <Text style={styles.featureText}>Chance of WiFi</Text>
-        </View>
-        <View style={styles.feature}>
-          <MaterialCommunityIcons name="power-plug-off" size={18} color="#000" />
-          <Text style={styles.featureText}>No power outlet</Text>
-        </View>
-      </View>
+      )}
     </View>
   );
 
@@ -141,6 +160,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1, // Đường kẻ dưới header
     borderBottomColor: '#ddd',
+    marginTop: 20, // Khoảng cách giữa header và nội dung
   },
   backButton: {
     marginRight: 16, // Khoảng cách giữa nút "Back" và tiêu đề
@@ -199,8 +219,14 @@ const styles = StyleSheet.create({
   },
   flightSection: {
     padding: 16,
-    borderBottomWidth: 1, // Đường kẻ dưới mỗi phần thông tin chuyến bay
-    borderBottomColor: '#eee',
+    borderWidth: 1, // Đường kẻ viền
+    backgroundColor: 'white', 
+    width: 500,
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: '#ddd',
   },
   flightTitle: {
     fontSize: 18,
@@ -213,7 +239,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   flightRoute: {
-    fontSize: 16,
+    fontSize: 27,
     fontWeight: 'bold',
   },
   flightDuration: {
@@ -225,8 +251,15 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   flightDate: {
-    fontSize: 14,
-    color: '#777',
+    fontSize: 18,
+    color: 'black',
+    fontWeight: '400',
+  },
+  moreInfoButton: {
+    fontSize: 16,
+    color: '#007BFF',
+    marginTop: 10,
+    alignSelf: 'center',
   },
   flightFeatures: {
     flexDirection: 'row', // Sắp xếp các tiện ích thành hàng
@@ -243,6 +276,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     marginLeft: 4, // Khoảng cách giữa icon và text
+  },
+  moreInfoButtonContainer: {
+    justifyContent: 'center', // Căn giữa nút More Info
+    alignSelf: 'center',
+    alignItems: 'center', // Căn giữa nút More Info
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    width: '100%',
   },
 });
 

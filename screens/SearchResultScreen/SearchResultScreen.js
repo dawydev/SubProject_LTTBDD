@@ -158,7 +158,10 @@ const SearchResultScreen = () => {
       cabinType, 
       tripType, 
       departDay: departDay.toString(), // Chuyển đổi departDay thành chuỗi
-      returnDay: returnDay.toString() // Chuyển đổi returnDay thành chuỗi
+      returnDay: returnDay.toString(), // Chuyển đổi returnDay thành chuỗi
+      adults, // Truyền thêm adults
+      children, // Truyền thêm children
+      infants // Truyền thêm infants
     })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />
