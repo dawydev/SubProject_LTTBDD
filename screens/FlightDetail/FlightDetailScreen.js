@@ -185,7 +185,21 @@ const FlightDetailScreen = ({ route }) => {
             <Text style={styles.textPrice}>{price}</Text>
             <Text style={{color:'#555', fontSize: 17,    marginLeft: 10}}>Total price</Text>
         </View>
-        <TouchableOpacity style={styles.selectButton}>
+        <TouchableOpacity 
+          style={styles.selectButton}
+          onPress={() => navigation.navigate('CheckoutPassengerScreen', {
+            flight,
+            travellers,
+            cabinType,
+            tripType,
+            departDay,
+            returnDay,
+            adults,
+            children,
+            infants,
+            price
+          })}
+        >
           <Text style={styles.selectButtonText}>Select</Text>
         </TouchableOpacity>
       </View>
