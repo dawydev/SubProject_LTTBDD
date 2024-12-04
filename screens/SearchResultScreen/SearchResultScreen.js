@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import CheckBox from '@react-native-community/checkbox';
+
 
 const flightData = [
   {
@@ -84,12 +86,38 @@ const SearchResultScreen = () => {
   const { fromCity, toCity, departDay, returnDay, adults, children, infants, selectedCabin } = route.params;
 
   const [favoriteFlights, setFavoriteFlights] = useState({});
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("Best");
+  const [selectedStops, setSelectedStops] = useState("Any stops");
+  const [selectedAirlines, setSelectedAirlines] = useState([]);
+
+  const stopsOptions = ["Any stops", "1 stop or nonstop", "Nonstop only"];
+  const airlinesOptions = ["SkyHaven", "EcoWings", "AirFly"];
 
   const toggleFavorite = (id) => {
     setFavoriteFlights((prevState) => ({
       ...prevState,
       [id]: !prevState[id],
     }));
+  };
+
+  const toggleAirline = (airline) => {
+    setSelectedAirlines((prev) =>
+      prev.includes(airline)
+        ? prev.filter((item) => item !== airline)
+        : [...prev, airline]
+    );
+  };
+
+  const handleClearAll = () => {
+    setSelectedSort("Best");
+    setSelectedStops("Any stops");
+    setSelectedAirlines([]);
+  };
+
+  const handleApply = () => {
+    // Thêm logic xử lý khi nhấn "Show X of Y"
+    setModalVisible(false);
   };
 
   const renderFlightItem = ({ item }) => (
@@ -113,7 +141,7 @@ const SearchResultScreen = () => {
           </View>
         </View>
       </View>
-  
+
       <View style={styles.flightRow}>
         <Image source={{ uri: item.return.airportIconImg }} style={styles.airportIcon} />
         <View style={{ flex: 1 }}>
@@ -133,7 +161,7 @@ const SearchResultScreen = () => {
           </View>
         </View>
       </View>
-  
+
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderColor: 'gray' }}>
         <TouchableOpacity onPress={() => toggleFavorite(item.id)} style={{ marginRight: 'auto', marginTop: 10 }}>
           <MaterialCommunityIcons
@@ -155,7 +183,7 @@ const SearchResultScreen = () => {
       </View>
 
       <View style={styles.filterRow}>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setModalVisible(true)}>
           <Text style={styles.filterText}>Sort & Filters</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.filterButton}>
@@ -174,6 +202,130 @@ const SearchResultScreen = () => {
         renderItem={renderFlightItem}
         keyExtractor={(item) => item.id}
       />
+
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Sort & Filters</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+              <MaterialCommunityIcons name="close" size={27} color="#919398" />
+            </TouchableOpacity>
+
+            {/* Sort By */}
+            <Text style={styles.sectionTitle}>Sort by</Text>
+            {["Best", "Cheap", "Fast"].map((sortOption) => (
+              <TouchableOpacity
+                key={sortOption}
+                style={styles.cabinOption}
+                onPress={() => setSelectedSort(sortOption)}
+              >
+                <Text
+                  style={[
+                    styles.cabinText,
+                    selectedSort === sortOption && styles.selectedCabinText,
+                  ]}
+                >
+                  {sortOption}
+                </Text>
+                {selectedSort === sortOption && (
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={20}
+                    color="#000"
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+
+            {/* Stops */}
+            <Text style={styles.sectionTitle}>Stops</Text>
+            {stopsOptions.map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={styles.cabinOption}
+                onPress={() => setSelectedStops(option)}
+              >
+                <Text
+                  style={[
+                    styles.cabinText,
+                    selectedStops === option && styles.selectedCabinText,
+                  ]}
+                >
+                  {option}
+                </Text>
+                {selectedStops === option && (
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={20}
+                    color="#000"
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+
+            {/* Airlines */}
+            <Text style={styles.sectionTitle}>Airlines</Text>
+            <TouchableOpacity
+              style={styles.cabinOption}
+              onPress={() => {
+                if (selectedAirlines.length === airlinesOptions.length) {
+                  setSelectedAirlines([]);
+                } else {
+                  setSelectedAirlines(airlinesOptions);
+                }
+              }}
+            >
+              <Text
+                style={[
+                  styles.cabinText,
+                  selectedAirlines.length === airlinesOptions.length && styles.selectedCabinText,
+                ]}
+              >
+                Select all
+              </Text>
+              {selectedAirlines.length === airlinesOptions.length && (
+                <MaterialCommunityIcons
+                  name="check"
+                  size={20}
+                  color="#000"
+                />
+              )}
+            </TouchableOpacity>
+            {airlinesOptions.map((airline) => (
+              <TouchableOpacity
+                key={airline}
+                style={styles.cabinOption}
+                onPress={() => toggleAirline(airline)}
+              >
+                <Text
+                  style={[
+                    styles.cabinText,
+                    selectedAirlines.includes(airline) && styles.selectedCabinText,
+                  ]}
+                >
+                  {airline}
+                </Text>
+                {selectedAirlines.includes(airline) && (
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={20}
+                    color="#000"
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
+              <Text style={styles.applyButtonText}>Apply</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -218,11 +370,11 @@ const styles = StyleSheet.create({
   },
   flightRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 5,
   },
   timeText: {
-    marginLeft: '10',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   durationText: {
@@ -232,12 +384,10 @@ const styles = StyleSheet.create({
   codeText: {
     fontSize: 14,
     color: '#919398',
-    marginRight: 10,
   },
   airlineText: {
     color: '#919398',
     marginBottom: 5,
-    
   },
   priceText: {
     fontSize: 18,
@@ -252,6 +402,64 @@ const styles = StyleSheet.create({
   airportIcon: {
     width: 50,
     height: 50,
+    marginTop: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  cabinOption: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#dcdcdc',
+    borderRadius: 5,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cabinText: {
+    fontSize: 14,
+    color: '#000',
+  },
+  selectedCabinText: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  applyButton: {
+    backgroundColor: '#00BDD5',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  applyButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
