@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const CheckoutSelectSeatScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { tripType, flight, travellers } = route.params;
+  const { tripType, flight, travellers, planeCode } = route.params;
 
   const [selectedSeat, setSelectedSeat] = useState(null);
   const [unavailableSeats, setUnavailableSeats] = useState(["A1", "B2", "C3", "D4"]); // Example of unavailable seats
@@ -52,72 +52,77 @@ const CheckoutSelectSeatScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Select Seats</Text>
-      </View>
-
-      {/* Flight Information */}
-      <View style={styles.flightInfoContainer}>
-        <Text style={styles.flightInfoText}>
-          {tripType === 'depart' ? `Flight from ${flight.depart.fromCode} to ${flight.depart.toCode}` : `Flight from ${flight.return.fromCode} to ${flight.return.toCode}`}
-        </Text>
-      </View>
-
-      {/* Seat Legend */}
-      <View style={styles.legendContainer}>
-        <View style={styles.legendItem}>
-          <View style={styles.seat}></View>
-          <Text style={styles.legendText}>Available seat</Text>
+    <View style={styles.container}>
+      <ScrollView>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Select Seats</Text>
         </View>
-        <View style={styles.legendItem}>
-          <View style={[styles.seat, styles.unavailableSeat]}>
-            <MaterialCommunityIcons name="close" size={24} color="#fff" />
+
+        {/* Flight Information */}
+        <View style={styles.flightInfoContainer}>
+          <Text style={styles.flightInfoText}>
+            {tripType === 'depart' ? `Flight from ${flight.depart.fromCode} to ${flight.depart.toCode}` : `Flight from ${flight.return.fromCode} to ${flight.return.toCode}`}
+          </Text>
+          <Text style={styles.flightInfoText}>Plane code: {planeCode}</Text>
+        </View>
+
+        {/* Seat Legend */}
+        <View style={styles.legendContainer}>
+          <View style={styles.legendItem}>
+            <View style={styles.seat}></View>
+            <Text style={styles.legendText}>Available seat</Text>
           </View>
-          <Text style={styles.legendText}>Unavailable seat</Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View style={[styles.seat, styles.selectedSeat]}>
-            <MaterialCommunityIcons name="check" size={24} color="#fff" />
+          <View style={styles.legendItem}>
+            <View style={[styles.seat, styles.unavailableSeat]}>
+              <MaterialCommunityIcons name="close" size={24} color="#fff" />
+            </View>
+            <Text style={styles.legendText}>Unavailable seat</Text>
           </View>
-          <Text style={styles.legendText}>Selected seat</Text>
+          <View style={styles.legendItem}>
+            <View style={[styles.seat, styles.selectedSeat]}>
+              <MaterialCommunityIcons name="check" size={24} color="#fff" />
+            </View>
+            <Text style={styles.legendText}>Selected seat</Text>
+          </View>
         </View>
-      </View>
 
-      {/* Seat Selection */}
-      <View style={styles.seatMap}>
-        <View style={styles.seatRow}>
-          <Text style={styles.seatLabel}></Text>
-          {["1", "2", "3", "4"].map((col) => (
-            <Text key={col} style={styles.seatLabel}>{col}</Text>
+        {/* Seat Selection */}
+        <View style={styles.seatMap}>
+          <View style={styles.seatRow}>
+            <Text style={styles.seatLabel}></Text>
+            {["1", "2", "3", "4"].map((col) => (
+              <Text key={col} style={styles.seatLabel}>{col}</Text>
+            ))}
+          </View>
+          {["A", "B", "C", "D", "E", "F"].map((row) => (
+            <View key={row} style={styles.seatRow}>
+              <Text style={styles.seatLabel}>{row}</Text>
+              {["1", "2", "3", "4"].map((col) => renderSeat(`${row}${col}`))}
+            </View>
           ))}
         </View>
-        {["A", "B", "C", "D", "E", "F"].map((row) => (
-          <View key={row} style={styles.seatRow}>
-            <Text style={styles.seatLabel}>{row}</Text>
-            {["1", "2", "3", "4"].map((col) => renderSeat(`${row}${col}`))}
-          </View>
-        ))}
-      </View>
+      </ScrollView>
 
-      {/* Confirm Button */}
-      <View style={styles.confirmButtonContainer}>
-        <TouchableOpacity style={styles.confirmButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.confirmButtonText}>Confirm Seats</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      {/* Footer */}
+      {selectedSeat && (
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Seat {selectedSeat} - $5.99</Text>
+          <TouchableOpacity style={styles.selectButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.selectButtonText}>Select</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
   },
   header: { 
@@ -186,6 +191,32 @@ const styles = StyleSheet.create({
   unavailableSeat: {
     backgroundColor: '#ccc',
     borderColor: '#ccc',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+  },
+  footerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  selectButton: {
+    backgroundColor: '#00BDD5',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   confirmButtonContainer: {
     alignItems: 'center',

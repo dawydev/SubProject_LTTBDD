@@ -15,7 +15,7 @@ const formatDate = (date) => {
 };
 
 const FlightDetailScreen = ({ route }) => {
-  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price } = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, departPlaneCode, returnPlaneCode } = route.params;
   const navigation = useNavigation();
   const [showFeatures, setShowFeatures] = useState(false); // State để quản lý việc hiển thị tiện ích
 
@@ -179,7 +179,7 @@ const FlightDetailScreen = ({ route }) => {
             </View>
         </View>  
       </View>
-      
+
       <View style={styles.selectButtonContainer}>
         <View style={{flexDirection:'column'}}>
             <Text style={styles.textPrice}>{price}</Text>
@@ -197,7 +197,9 @@ const FlightDetailScreen = ({ route }) => {
             adults,
             children,
             infants,
-            price
+            price,
+            departPlaneCode,
+            returnPlaneCode
           })}
         >
           <Text style={styles.selectButtonText}>Select</Text>

@@ -19,6 +19,7 @@ const flightData = [
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
       country: 'United States',
+      planeCode: 'SH123'
     },
     return: {
       departTime: '10:00 PM',
@@ -30,6 +31,7 @@ const flightData = [
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
       country: 'United Kingdom',
+      planeCode: 'EW456'
     },
     price: '$654',
   },
@@ -45,6 +47,7 @@ const flightData = [
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
       country: 'United States',
+      planeCode: 'CC789'
     },
     return: {
       departTime: '6:30 PM',
@@ -56,6 +59,7 @@ const flightData = [
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
       country: 'United Kingdom',
+      planeCode: 'FA012'
     },
     price: '$964',
   },
@@ -71,6 +75,7 @@ const flightData = [
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
       country: 'United States',
+      planeCode: 'EW345'
     },
     return: {
       departTime: '7:55 AM',
@@ -82,6 +87,7 @@ const flightData = [
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
       country: 'United Kingdom',
+      planeCode: 'EW678'
     },
     price: '$964',
   },
@@ -89,7 +95,7 @@ const flightData = [
 
 const SearchResultScreen = () => {
   const route = useRoute();
-  const { fromCity, toCity, departDay, returnDay, adults, children, infants, cabinType, tripType } = route.params;
+  const { fromCity, toCity, departDay, returnDay, adults, children, infants, cabinType, tripType, planeCode } = route.params;
   const navigation = useNavigation();
   const [favoriteFlights, setFavoriteFlights] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -163,6 +169,8 @@ const SearchResultScreen = () => {
       children, // Truyền thêm children
       infants, // Truyền thêm infants
       price: item.price, // Truyền thêm giá vé
+      departPlaneCode: item.depart.planeCode, // Truyền thêm planeCode cho chuyến đi
+      returnPlaneCode: item.return.planeCode, // Truyền thêm planeCode cho chuyến về
     })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />

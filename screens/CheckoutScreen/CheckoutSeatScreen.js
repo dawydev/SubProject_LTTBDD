@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const CheckoutSeatScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, cabinBag, checkedBag, travelProtection } = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, cabinBag, checkedBag, travelProtection, departPlaneCode, returnPlaneCode } = route.params;
 
   return (
     <ScrollView style={styles.container}>
@@ -38,16 +38,12 @@ const CheckoutSeatScreen = () => {
         <Text style={styles.titleText}>Select Seats</Text>
       </View>
 
-      {/* Flight Information */}
-      <View style={styles.flightInfoContainer}>
-        <Text style={styles.flightInfoText}>Flight from {flight.depart.fromCode} to {flight.depart.toCode}</Text>
-      </View>
-
       {/* Depart Flight Seat Selection */}
       <View style={styles.flightCard}>
+        <Text style={styles.flightInfoText}>Plane code: {departPlaneCode}</Text>
         <Text style={styles.flightCardTitle}>Depart: {flight.depart.fromCode} to {flight.depart.toCode}</Text>
         <View style={styles.selectSeatButtonContainer}>
-          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'depart', flight, travellers })}>
+          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'depart', flight, travellers, planeCode: departPlaneCode })}>
             <Text style={styles.selectSeatButtonText}>Select Seat</Text>
           </TouchableOpacity>
         </View>
@@ -55,9 +51,10 @@ const CheckoutSeatScreen = () => {
 
       {/* Return Flight Seat Selection */}
       <View style={styles.flightCard}>
+        <Text style={styles.flightInfoText}>Plane code: {returnPlaneCode}</Text>
         <Text style={styles.flightCardTitle}>Return: {flight.return.fromCode} to {flight.return.toCode}</Text>
         <View style={styles.selectSeatButtonContainer}>
-          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'return', flight, travellers })}>
+          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'return', flight, travellers, planeCode: returnPlaneCode })}>
             <Text style={styles.selectSeatButtonText}>Select Seat</Text>
           </TouchableOpacity>
         </View>
@@ -85,6 +82,8 @@ const CheckoutSeatScreen = () => {
           cabinBag,
           checkedBag,
           travelProtection,
+          departPlaneCode,
+          returnPlaneCode
         })}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
