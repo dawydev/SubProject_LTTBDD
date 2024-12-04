@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Modal } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { useNavigation } from '@react-navigation/native';
 
 const flightData = [
   {
@@ -83,22 +83,24 @@ const flightData = [
 const SearchResultScreen = () => {
   const route = useRoute();
   const { fromCity, toCity, departDay, returnDay, adults, children, infants, selectedCabin } = route.params;
-
+  const navigation = useNavigation();
   const [favoriteFlights, setFavoriteFlights] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState("Best");
   const [selectedStops, setSelectedStops] = useState("Any stops");
   const [selectedAirlines, setSelectedAirlines] = useState([]);
   const [filteredData, setFilteredData] = useState(flightData);
-
   const stopsOptions = ["Any stops", "1 stop or nonstop", "Nonstop only"];
   const airlinesOptions = ["SkyHaven", "EcoWings", "AirFly"];
 
   const toggleFavorite = (id) => {
-    setFavoriteFlights((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
-    }));
+    setFavoriteFlights((prevFavorites) => {
+      const updatedFavorites = {
+        ...prevFavorites,
+        [id]: !prevFavorites[id],
+      };
+      return updatedFavorites;
+    });
   };
 
   const toggleAirline = (airline) => {
@@ -141,10 +143,10 @@ const SearchResultScreen = () => {
   };
 
   const renderFlightItem = ({ item }) => (
-    <TouchableOpacity style={styles.flightCard} onPress={() => console.log('Flight selected', item.id)}>
+    <TouchableOpacity style={styles.flightCard} onPress={() => navigation.navigate('FlightDetailScreen', { flight: item })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginLeft: 10 }}>
           <View style={styles.flightRow}>
             <Text style={styles.timeText}>{item.depart.departTime}</Text>
             <Text style={styles.timeText}>—</Text>
@@ -155,16 +157,16 @@ const SearchResultScreen = () => {
           </View>
           <View style={styles.flightRow}>
             <Text style={styles.codeText}>{item.depart.fromCode}</Text>
-            <Text style={styles.codeText}>—</Text>
-            <Text style={styles.codeText}>{item.depart.toCode}</Text>
-            <Text style={styles.airlineText}>{item.depart.airline}, {item.depart.stops}</Text>
+            <Text style={styles.codeText}> — </Text>
+            <Text style={styles.codeText}>{item.depart.toCode} {item.depart.airline}</Text>
+            <Text style={styles.airlineText}> {item.depart.stops}</Text>
           </View>
         </View>
       </View>
-
+  
       <View style={styles.flightRow}>
         <Image source={{ uri: item.return.airportIconImg }} style={styles.airportIcon} />
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginLeft: 10 }}>
           <View style={styles.flightRow}>
             <Text style={styles.timeText}>{item.return.departTime}</Text>
             <Text style={styles.timeText}>—</Text>
@@ -175,13 +177,13 @@ const SearchResultScreen = () => {
           </View>
           <View style={styles.flightRow}>
             <Text style={styles.codeText}>{item.return.fromCode}</Text>
-            <Text style={styles.codeText}>—</Text>
-            <Text style={styles.codeText}>{item.return.toCode}</Text>
-            <Text style={styles.airlineText}>{item.return.airline}, {item.return.stops}</Text>
+            <Text style={styles.codeText}> — </Text>
+            <Text style={styles.codeText}>{item.return.toCode} {item.return.airline}</Text>
+            <Text style={styles.airlineText}>, {item.return.stops}</Text>
           </View>
         </View>
       </View>
-
+  
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderColor: 'gray' }}>
         <TouchableOpacity onPress={() => toggleFavorite(item.id)} style={{ marginRight: 'auto', marginTop: 10 }}>
           <MaterialCommunityIcons
@@ -383,31 +385,36 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   flightCard: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: 'white',
     borderRadius: 8,
     padding: 15,
     marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#dcdcdc',
   },
   flightRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 5,
   },
   timeText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '600',
+    marginRight: 10,
   },
   durationText: {
     color: '#919398',
-    fontSize: 14,
+    fontSize: 18,
   },
   codeText: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#919398',
+    
   },
   airlineText: {
     color: '#919398',
     marginBottom: 5,
+    marginLeft: 'auto',
+    fontSize: 18,
   },
   priceText: {
     fontSize: 18,
@@ -422,7 +429,7 @@ const styles = StyleSheet.create({
   airportIcon: {
     width: 50,
     height: 50,
-    marginTop: 10,
+    marginTop: 5,
   },
   modalContainer: {
     flex: 1,

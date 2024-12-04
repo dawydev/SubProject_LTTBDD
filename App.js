@@ -10,6 +10,9 @@ import UserScreen from './screens/UserScreen/UserScreen.js';
 import ExploreScreen from './screens/ExploreScreen/ExploreScreen.js';
 import SearchingFlightScreen from './screens/SearchingFlightScreen/SearchingFlightScreen.js';
 import SearchResultScreen from './screens/SearchResultScreen/SearchResultScreen.js';
+import FlightDetailScreen from './screens/FlightDetail/FlightDetailScreen.js';
+
+
 // Tạo Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -33,6 +36,16 @@ export default function App() {
       <Stack.Screen 
         name="SearchResultScreen" 
         component={SearchResultScreen} 
+        options={{ headerShown: false }}  // Ẩn header mặc định
+      />
+      <Stack.Screen 
+        name="UserScreen" 
+        component={UserScreen} 
+        options={{ headerShown: false }}  // Ẩn header mặc định
+      />
+      <Stack.Screen 
+        name="FlightDetailScreen" 
+        component={FlightDetailScreen} 
         options={{ headerShown: false }}  // Ẩn header mặc định
       />
     </Stack.Navigator>
