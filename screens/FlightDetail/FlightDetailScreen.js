@@ -177,9 +177,9 @@ const FlightDetailScreen = ({ route }) => {
             <Text style={styles.extraBaggagePrice}>From $19.99</Text>
             <Text style={styles.extraBaggageInfo}>Available in the next steps</Text>
             </View>
-        </View>
-        
+        </View>  
       </View>
+      
       <View style={styles.selectButtonContainer}>
         <View style={{flexDirection:'column'}}>
             <Text style={styles.textPrice}>{price}</Text>
