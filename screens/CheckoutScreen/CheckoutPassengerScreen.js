@@ -126,6 +126,16 @@ const CheckoutPassengerScreen = () => {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Traveller Information</Text>
       </View>
+    {/* Step Progress */}
+    <View style={styles.stepContainer}>
+        <MaterialCommunityIcons name="account" size={24} color="#00aaff" />
+        <View style={styles.stepDividerActive} />
+        <MaterialCommunityIcons name="bag-suitcase" size={24} color="#ccc" />
+        <View style={styles.stepDivider} />
+        <MaterialCommunityIcons name="seat" size={24} color="#ccc" />
+        <View style={styles.stepDivider} />
+        <MaterialCommunityIcons name="credit-card" size={24} color="#ccc" />
+      </View>
 
       {/* Traveller Information Sections */}
       {travelerDetails.map((traveler, index) => (
@@ -215,24 +225,45 @@ const CheckoutPassengerScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-  header: { flexDirection: "row", alignItems: "center", padding: 16 },
-  backButton: { marginRight: 8 },
-  headerTitle: { fontSize: 18, fontWeight: "bold" },
+  header: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    padding: 16, 
+    marginTop: 40 
+},
+  backButton: { 
+    marginRight: 8 
+},
+  headerTitle: { 
+    fontSize: 18, 
+    fontWeight: "bold" 
+},
   stepContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 16,
   },
-  stepDivider: { width: 40, height: 2, backgroundColor: "#ccc", marginHorizontal: 4 },
+  stepDivider: { 
+    width: 40, 
+    height: 2, 
+    backgroundColor: "#ccc", 
+    marginHorizontal: 4 
+},
   stepDividerActive: {
     width: 40,
     height: 2,
     backgroundColor: "#00aaff",
     marginHorizontal: 4,
   },
-  section: { padding: 16 },
-  sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 12 },
+  section: { 
+    padding: 16 
+  },
+  sectionTitle: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    marginBottom: 12 
+},
   input: {
     height: 48,
     borderWidth: 1,
@@ -255,8 +286,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
   },
-  countryCode: { fontSize: 16, marginRight: 8 },
-  phoneInput: { flex: 1, height: 48 },
+  countryCode: { 
+    fontSize: 16, 
+    marginRight: 8 
+},
+  phoneInput: { 
+    flex: 1, 
+    height: 48 
+},
   nextButtonContainer: {
     width: '90%',
     marginTop: 10,
