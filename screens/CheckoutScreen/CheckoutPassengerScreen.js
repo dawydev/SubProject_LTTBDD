@@ -26,7 +26,8 @@ const CheckoutPassengerScreen = () => {
     infants,
     price,
     departPlaneCode,
-    returnPlaneCode
+    returnPlaneCode,
+    seats
   } = route.params;
 
   const [travelerDetails, setTravelerDetails] = useState(
@@ -134,7 +135,8 @@ const CheckoutPassengerScreen = () => {
         travelerDetails,
         contactDetails,
         departPlaneCode,
-        returnPlaneCode
+        returnPlaneCode,
+        seats // Truyền thêm seats
           });
     } else {
       console.log("Please fill in all required fields.");

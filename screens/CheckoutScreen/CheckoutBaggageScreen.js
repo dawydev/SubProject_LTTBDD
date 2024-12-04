@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const CheckoutBaggageScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, departPlaneCode, returnPlaneCode } = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, departPlaneCode, returnPlaneCode, seats} = route.params;
 
   const [cabinBag, setCabinBag] = useState("personal");
   const [checkedBag, setCheckedBag] = useState("noChecked");
@@ -149,7 +149,8 @@ const CheckoutBaggageScreen = () => {
           checkedBag,
           travelProtection,
           departPlaneCode,
-          returnPlaneCode
+          returnPlaneCode,
+          seats
         })}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>

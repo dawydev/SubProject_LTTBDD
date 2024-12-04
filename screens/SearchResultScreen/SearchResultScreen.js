@@ -33,7 +33,33 @@ const flightData = [
       country: 'United Kingdom',
       planeCode: 'EW456'
     },
-    price: '$654',
+    price: 654,
+    seats: [
+      { "id": "A1", "row": "A", "column": "1", "status": "available" },
+      { "id": "A2", "row": "A", "column": "2", "status": "available" },
+      { "id": "A3", "row": "A", "column": "3", "status": "unavailable" },
+      { "id": "A4", "row": "A", "column": "4", "status": "available" },
+      { "id": "B1", "row": "B", "column": "1", "status": "available" },
+      { "id": "B2", "row": "B", "column": "2", "status": "unavailable" },
+      { "id": "B3", "row": "B", "column": "3", "status": "available" },
+      { "id": "B4", "row": "B", "column": "4", "status": "available" },
+      { "id": "C1", "row": "C", "column": "1", "status": "available" },
+      { "id": "C2", "row": "C", "column": "2", "status": "available" },
+      { "id": "C3", "row": "C", "column": "3", "status": "unavailable" },
+      { "id": "C4", "row": "C", "column": "4", "status": "available" },
+      { "id": "D1", "row": "D", "column": "1", "status": "available" },
+      { "id": "D2", "row": "D", "column": "2", "status": "available" },
+      { "id": "D3", "row": "D", "column": "3", "status": "available" },
+      { "id": "D4", "row": "D", "column": "4", "status": "unavailable" },
+      { "id": "E1", "row": "E", "column": "1", "status": "available" },
+      { "id": "E2", "row": "E", "column": "2", "status": "available" },
+      { "id": "E3", "row": "E", "column": "3", "status": "available" },
+      { "id": "E4", "row": "E", "column": "4", "status": "available" },
+      { "id": "F1", "row": "F", "column": "1", "status": "available" },
+      { "id": "F2", "row": "F", "column": "2", "status": "available" },
+      { "id": "F3", "row": "F", "column": "3", "status": "available" },
+      { "id": "F4", "row": "F", "column": "4", "status": "available" }
+    ]
   },
   {
     id: '2',
@@ -61,7 +87,33 @@ const flightData = [
       country: 'United Kingdom',
       planeCode: 'FA012'
     },
-    price: '$964',
+    price: 875,
+    seats: [
+      { "id": "A1", "row": "A", "column": "1", "status": "available" },
+      { "id": "A2", "row": "A", "column": "2", "status": "available" },
+      { "id": "A3", "row": "A", "column": "3", "status": "unavailable" },
+      { "id": "A4", "row": "A", "column": "4", "status": "available" },
+      { "id": "B1", "row": "B", "column": "1", "status": "available" },
+      { "id": "B2", "row": "B", "column": "2", "status": "unavailable" },
+      { "id": "B3", "row": "B", "column": "3", "status": "available" },
+      { "id": "B4", "row": "B", "column": "4", "status": "available" },
+      { "id": "C1", "row": "C", "column": "1", "status": "available" },
+      { "id": "C2", "row": "C", "column": "2", "status": "available" },
+      { "id": "C3", "row": "C", "column": "3", "status": "unavailable" },
+      { "id": "C4", "row": "C", "column": "4", "status": "available" },
+      { "id": "D1", "row": "D", "column": "1", "status": "available" },
+      { "id": "D2", "row": "D", "column": "2", "status": "available" },
+      { "id": "D3", "row": "D", "column": "3", "status": "available" },
+      { "id": "D4", "row": "D", "column": "4", "status": "unavailable" },
+      { "id": "E1", "row": "E", "column": "1", "status": "available" },
+      { "id": "E2", "row": "E", "column": "2", "status": "available" },
+      { "id": "E3", "row": "E", "column": "3", "status": "available" },
+      { "id": "E4", "row": "E", "column": "4", "status": "available" },
+      { "id": "F1", "row": "F", "column": "1", "status": "available" },
+      { "id": "F2", "row": "F", "column": "2", "status": "available" },
+      { "id": "F3", "row": "F", "column": "3", "status": "available" },
+      { "id": "F4", "row": "F", "column": "4", "status": "available" }
+    ]
   },
   {
     id: '3',
@@ -89,8 +141,34 @@ const flightData = [
       country: 'United Kingdom',
       planeCode: 'EW678'
     },
-    price: '$964',
-  },
+    price: 964,
+    seats: [
+      { "id": "A1", "row": "A", "column": "1", "status": "available" },
+      { "id": "A2", "row": "A", "column": "2", "status": "available" },
+      { "id": "A3", "row": "A", "column": "3", "status": "unavailable" },
+      { "id": "A4", "row": "A", "column": "4", "status": "available" },
+      { "id": "B1", "row": "B", "column": "1", "status": "available" },
+      { "id": "B2", "row": "B", "column": "2", "status": "unavailable" },
+      { "id": "B3", "row": "B", "column": "3", "status": "available" },
+      { "id": "B4", "row": "B", "column": "4", "status": "available" },
+      { "id": "C1", "row": "C", "column": "1", "status": "available" },
+      { "id": "C2", "row": "C", "column": "2", "status": "available" },
+      { "id": "C3", "row": "C", "column": "3", "status": "unavailable" },
+      { "id": "C4", "row": "C", "column": "4", "status": "available" },
+      { "id": "D1", "row": "D", "column": "1", "status": "available" },
+      { "id": "D2", "row": "D", "column": "2", "status": "available" },
+      { "id": "D3", "row": "D", "column": "3", "status": "available" },
+      { "id": "D4", "row": "D", "column": "4", "status": "unavailable" },
+      { "id": "E1", "row": "E", "column": "1", "status": "available" },
+      { "id": "E2", "row": "E", "column": "2", "status": "available" },
+      { "id": "E3", "row": "E", "column": "3", "status": "available" },
+      { "id": "E4", "row": "E", "column": "4", "status": "available" },
+      { "id": "F1", "row": "F", "column": "1", "status": "available" },
+      { "id": "F2", "row": "F", "column": "2", "status": "available" },
+      { "id": "F3", "row": "F", "column": "3", "status": "available" },
+      { "id": "F4", "row": "F", "column": "4", "status": "available" }
+    ]
+  }
 ];
 
 const SearchResultScreen = () => {
@@ -171,6 +249,7 @@ const SearchResultScreen = () => {
       price: item.price, // Truyền thêm giá vé
       departPlaneCode: item.depart.planeCode, // Truyền thêm planeCode cho chuyến đi
       returnPlaneCode: item.return.planeCode, // Truyền thêm planeCode cho chuyến về
+      seats: item.seats // Truyền thêm seats
     })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />

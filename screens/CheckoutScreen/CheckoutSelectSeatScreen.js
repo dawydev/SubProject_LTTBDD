@@ -12,34 +12,35 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const CheckoutSelectSeatScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { tripType, flight, travellers, planeCode } = route.params;
+  const { tripType, flight, travellers, planeCode, seats, cabinType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, cabinBag, checkedBag, travelProtection, departPlaneCode, returnPlaneCode } = route.params;
 
   const [selectedSeat, setSelectedSeat] = useState(null);
-  const [unavailableSeats, setUnavailableSeats] = useState(["A1", "B2", "C3", "D4"]); // Example of unavailable seats
+  const seatPrice = 5.99; // Giá tiền của mỗi ghế
 
-  const handleSeatSelection = (seat) => {
-    if (unavailableSeats.includes(seat)) return;
+  const handleSeatSelection = (seatId) => {
+    const seat = seats.find(s => s.id === seatId);
+    if (seat.status === "unavailable") return;
 
-    if (selectedSeat === seat) {
+    if (selectedSeat === seatId) {
       setSelectedSeat(null);
     } else {
-      setSelectedSeat(seat);
+      setSelectedSeat(seatId);
     }
   };
 
   const renderSeat = (seat) => {
-    const isSelected = selectedSeat === seat;
-    const isUnavailable = unavailableSeats.includes(seat);
+    const isSelected = selectedSeat === seat.id;
+    const isUnavailable = seat.status === "unavailable";
 
     return (
       <TouchableOpacity
-        key={seat}
+        key={seat.id}
         style={[
           styles.seat,
           isSelected && styles.selectedSeat,
           isUnavailable && styles.unavailableSeat,
         ]}
-        onPress={() => handleSeatSelection(seat)}
+        onPress={() => handleSeatSelection(seat.id)}
         disabled={isUnavailable}
       >
         {isUnavailable ? (
@@ -101,7 +102,7 @@ const CheckoutSelectSeatScreen = () => {
           {["A", "B", "C", "D", "E", "F"].map((row) => (
             <View key={row} style={styles.seatRow}>
               <Text style={styles.seatLabel}>{row}</Text>
-              {["1", "2", "3", "4"].map((col) => renderSeat(`${row}${col}`))}
+              {["1", "2", "3", "4"].map((col) => renderSeat(seats.find(seat => seat.id === `${row}${col}`)))}
             </View>
           ))}
         </View>
@@ -110,8 +111,31 @@ const CheckoutSelectSeatScreen = () => {
       {/* Footer */}
       {selectedSeat && (
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Seat {selectedSeat} - $5.99</Text>
-          <TouchableOpacity style={styles.selectButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.footerText}>Seat {selectedSeat} - ${seatPrice}</Text>
+          <TouchableOpacity style={styles.selectButton} onPress={() => {
+            const totalPrice = parseFloat(price) + seatPrice; // Đảm bảo price là số trước khi cộng
+            navigation.navigate('CheckoutSeatScreen', {
+              flight,
+              travellers,
+              cabinType,
+              tripType,
+              departDay,
+              returnDay,
+              adults,
+              children,
+              infants,
+              price: totalPrice.toFixed(2), // Cộng giá tiền của ghế vào tổng giá
+              travelerDetails,
+              contactDetails,
+              cabinBag,
+              checkedBag,
+              travelProtection,
+              departPlaneCode,
+              returnPlaneCode,
+              selectedSeat, // Truyền mã số ghế đã chọn
+              seatPrice // Truyền giá tiền của ghế
+            });
+          }}>
             <Text style={styles.selectButtonText}>Select</Text>
           </TouchableOpacity>
         </View>
