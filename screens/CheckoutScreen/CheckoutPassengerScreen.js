@@ -15,7 +15,15 @@ const CheckoutPassengerScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const {
+    flight,
     travellers,
+    cabinType,
+    tripType,
+    departDay,
+    returnDay,
+    adults,
+    children,
+    infants,
     price,
   } = route.params;
 
@@ -110,8 +118,20 @@ const CheckoutPassengerScreen = () => {
 
   const handleNext = () => {
     if (validateInputs()) {
-      console.log("All inputs are valid:", travelerDetails, contactDetails);
-      // Continue to the next screen
+      navigation.navigate('CheckoutBaggageScreen', {
+        flight,
+        travellers,
+        cabinType,
+        tripType,
+        departDay,
+        returnDay,
+        adults,
+        children,
+        infants,
+        price,
+        travelerDetails,
+        contactDetails,
+      });
     } else {
       console.log("Please fill in all required fields.");
     }
@@ -124,19 +144,22 @@ const CheckoutPassengerScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Traveller Information</Text>
+        {/* Step Progress */}
+        <View style={styles.stepContainer}>
+            <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="account" size={24} color="white" />
+            <View style={styles.stepDividerActive} />
+            <MaterialCommunityIcons name="bag-suitcase" size={24} color="#ccc" />
+            <View style={styles.stepDivider} />
+            <MaterialCommunityIcons name="seat" size={24} color="#ccc" />
+            <View style={styles.stepDivider} />
+            <MaterialCommunityIcons name="credit-card" size={24} color="#ccc" />
+        </View>
       </View>
-    {/* Step Progress */}
-    <View style={styles.stepContainer}>
-        <MaterialCommunityIcons name="account" size={24} color="#00aaff" />
-        <View style={styles.stepDividerActive} />
-        <MaterialCommunityIcons name="bag-suitcase" size={24} color="#ccc" />
-        <View style={styles.stepDivider} />
-        <MaterialCommunityIcons name="seat" size={24} color="#ccc" />
-        <View style={styles.stepDivider} />
-        <MaterialCommunityIcons name="credit-card" size={24} color="#ccc" />
+      
+      {/* Title */}
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleText}>Traveller Information</Text>
       </View>
-
       {/* Traveller Information Sections */}
       {travelerDetails.map((traveler, index) => (
         <View key={index} style={styles.section}>
@@ -228,33 +251,45 @@ const styles = StyleSheet.create({
   header: { 
     flexDirection: "row", 
     alignItems: "center", 
-    padding: 16, 
-    marginTop: 40 
-},
+    padding: 16,
+    marginTop: 20, 
+
+  },
   backButton: { 
     marginRight: 8 
-},
+  },
   headerTitle: { 
     fontSize: 18, 
     fontWeight: "bold" 
-},
+  },
   stepContainer: {
+    marginLeft: '22%',
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
     marginVertical: 16,
+    justifyContent: 'center', // Căn giữa theo chiều dọc
+    alignItems: 'center', // Căn giữa theo chiều ngang
   },
   stepDivider: { 
     width: 40, 
     height: 2, 
     backgroundColor: "#ccc", 
     marginHorizontal: 4 
-},
+  },
   stepDividerActive: {
     width: 40,
     height: 2,
     backgroundColor: "#00aaff",
     marginHorizontal: 4,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titleText: {
+    fontSize: 23,
+    fontWeight: "bold",
   },
   section: { 
     padding: 16 
@@ -263,7 +298,7 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     fontWeight: "bold", 
     marginBottom: 12 
-},
+  },
   input: {
     height: 48,
     borderWidth: 1,
@@ -278,22 +313,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
   },
-  phoneInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 12,
+  inputError: {
+    borderColor: 'red',
   },
-  countryCode: { 
-    fontSize: 16, 
-    marginRight: 8 
-},
-  phoneInput: { 
-    flex: 1, 
-    height: 48 
-},
+  errorText: {
+    color: 'red',
+    marginBottom: 12,
+  },
   nextButtonContainer: {
     width: '90%',
     marginTop: 10,
@@ -319,28 +345,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
-  textPrice: {
+  textPrice:{
     marginLeft: 10,
     fontSize: 35,
     fontWeight: 'bold',
     color: '#000',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    backgroundColor: "#fff",
-  },
-  inputError: {
-    borderColor: "red",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
-  },
+  }
 });
 
 export default CheckoutPassengerScreen;
