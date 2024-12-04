@@ -161,7 +161,8 @@ const SearchResultScreen = () => {
       returnDay: returnDay.toString(), // Chuyển đổi returnDay thành chuỗi
       adults, // Truyền thêm adults
       children, // Truyền thêm children
-      infants // Truyền thêm infants
+      infants, // Truyền thêm infants
+      price: item.price, // Truyền thêm giá vé
     })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />

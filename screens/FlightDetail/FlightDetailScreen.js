@@ -15,7 +15,7 @@ const formatDate = (date) => {
 };
 
 const FlightDetailScreen = ({ route }) => {
-  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants } = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price } = route.params;
   const navigation = useNavigation();
   const [showFeatures, setShowFeatures] = useState(false); // State để quản lý việc hiển thị tiện ích
 
@@ -145,6 +145,50 @@ const FlightDetailScreen = ({ route }) => {
 
       {/* Hiển thị thông tin chuyến về (return flight) */}
       {renderFlightInfo("Return Flight", flight.return, formattedReturnDay)}
+      {/* Baggage Section */}
+      <View style={styles.baggageContainer}>
+      <Text style={styles.baggageTitle}>Included baggage</Text>
+      <Text style={styles.baggageSubText}>Total baggage included in the price</Text>
+
+        <View style={{flexDirection:'row'}}>
+        <MaterialCommunityIcons  name="bag-personal" size={24} color="#000"/>
+            <View style={{marginLeft:20}}>
+                <Text style={styles.baggageInfo}>
+                1 personal item 
+                </Text>
+                <Text style={styles.baggageSubText}>Must go under the seat in front of you</Text>
+                <Text style={styles.includedText}>Included</Text>
+            </View>
+        </View>
+
+        <Text style={styles.extraBaggageTitle}>Extra baggage</Text>
+        <View style={{flexDirection: 'row'}}>
+            <MaterialCommunityIcons  style={{marginTop:25, marginRight:20}} name="bag-personal" size={24} color="#000"/>
+            <View style={styles.extraBaggageRow}> 
+              <Text style={styles.extraBaggageInfo}>Carry-on</Text>
+              <Text style={styles.extraBaggagePrice}>From $11.99</Text>
+              <Text style={styles.extraBaggageInfo}>Available in the next steps</Text>
+            </View>
+        </View>
+        <View style={{flexDirection: 'row'}}>
+            <MaterialCommunityIcons  style={{marginTop:25, marginRight:20}} name="bag-personal" size={24} color="#000"/>
+            <View style={styles.extraBaggageRow}>
+            <Text style={styles.extraBaggageInfo}>Checked bag</Text>
+            <Text style={styles.extraBaggagePrice}>From $19.99</Text>
+            <Text style={styles.extraBaggageInfo}>Available in the next steps</Text>
+            </View>
+        </View>
+        
+      </View>
+      <View style={styles.selectButtonContainer}>
+        <View style={{flexDirection:'column'}}>
+            <Text style={styles.textPrice}>{price}</Text>
+            <Text style={{color:'#555', fontSize: 17,    marginLeft: 10}}>Total price</Text>
+        </View>
+        <TouchableOpacity style={styles.selectButton}>
+          <Text style={styles.selectButtonText}>Select</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -286,6 +330,80 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     width: '100%',
   },
+  baggageContainer: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  baggageTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  baggageInfo: {
+    fontSize: 19,
+    marginBottom: 5,
+  },
+  includedText: {
+    fontSize: 17,
+    color: 'green',
+    fontWeight: '500',
+  },
+  baggageSubText: {
+    fontSize: 17,
+    color: '#888',
+  },
+  extraBaggageTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
+  extraBaggageRow: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    marginVertical: 5,
+  },
+  extraBaggageInfo: {
+    fontSize: 19,
+  },
+  extraBaggagePrice: {
+    fontSize: 14,
+    color: '#555',
+  },
+  selectButtonContainer: {
+    width: '90%',
+    marginTop: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignSelf: 'center',
+    marginBottom: 40,
+  },
+  selectButton: {
+    backgroundColor: '#00BDD5',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    width: 250,
+  },
+  selectButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  textPrice:{
+    marginLeft: 10,
+    fontSize: 35,
+    fontWeight: 'bold',
+    color: '#000',
+  }
 });
 
 export default FlightDetailScreen;
