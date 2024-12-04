@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Modal } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import CheckBox from '@react-native-community/checkbox';
 
 
 const flightData = [
@@ -29,7 +28,7 @@ const flightData = [
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
     },
-    price: '$806',
+    price: '$654',
   },
   {
     id: '2',
@@ -37,7 +36,7 @@ const flightData = [
       departTime: '3:15 PM',
       arriveTime: '6:05 PM',
       duration: '7h50m',
-      stops: 'Direct',
+      stops: '2 stop',
       airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
       airline: 'CC Air',
       fromCode: 'LHR', // London Heathrow
@@ -90,6 +89,7 @@ const SearchResultScreen = () => {
   const [selectedSort, setSelectedSort] = useState("Best");
   const [selectedStops, setSelectedStops] = useState("Any stops");
   const [selectedAirlines, setSelectedAirlines] = useState([]);
+  const [filteredData, setFilteredData] = useState(flightData);
 
   const stopsOptions = ["Any stops", "1 stop or nonstop", "Nonstop only"];
   const airlinesOptions = ["SkyHaven", "EcoWings", "AirFly"];
@@ -113,10 +113,30 @@ const SearchResultScreen = () => {
     setSelectedSort("Best");
     setSelectedStops("Any stops");
     setSelectedAirlines([]);
+    setFilteredData(flightData);
   };
 
   const handleApply = () => {
-    // Thêm logic xử lý khi nhấn "Show X of Y"
+    let data = [...flightData];
+
+    // Lọc theo giá
+    if (selectedSort === "Cheap") {
+      data = data.filter(item => parseFloat(item.price.replace('$', '')) < 700);
+    }
+
+    // Lọc theo số điểm dừng
+    if (selectedStops === "1 stop or nonstop") {
+      data = data.filter(item => item.depart.stops === 'Direct' || item.depart.stops === '1 stop');
+    } else if (selectedStops === "Nonstop only") {
+      data = data.filter(item => item.depart.stops === 'Direct');
+    }
+
+    // Lọc theo hãng hàng không
+    if (selectedAirlines.length > 0) {
+      data = data.filter(item => selectedAirlines.includes(item.depart.airline));
+    }
+
+    setFilteredData(data);
     setModalVisible(false);
   };
 
@@ -198,7 +218,7 @@ const SearchResultScreen = () => {
       </View>
 
       <FlatList
-        data={flightData}
+        data={filteredData}
         renderItem={renderFlightItem}
         keyExtractor={(item) => item.id}
       />
@@ -450,7 +470,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   applyButton: {
-    backgroundColor: '#00BDD5',
+    backgroundColor: '#007BFF',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
