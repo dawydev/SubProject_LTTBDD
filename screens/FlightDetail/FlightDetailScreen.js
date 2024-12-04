@@ -4,8 +4,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 const FlightDetailScreen = ({ route }) => {
-  const { flight, travellers, cabinType, tripType } = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay } = route.params;
   const navigation = useNavigation();
+
+  // Chuyển đổi đối tượng Date thành chuỗi
+  const formattedDepartDay = new Date(departDay).toLocaleDateString();
+  const formattedReturnDay = new Date(returnDay).toLocaleDateString();
 
   return (
     <ScrollView style={styles.container}>
@@ -28,6 +32,16 @@ const FlightDetailScreen = ({ route }) => {
         <Text style={styles.tripSubtitle}>{flight.depart.fromCode} - {flight.depart.toCode}</Text>
         <Text style={styles.tripDate}>{flight.depart.departTime} - {flight.depart.arriveTime}</Text>
         <Text style={styles.tripInfo}>{flight.depart.stops} stop • {flight.depart.duration}</Text>
+        <Text style={styles.tripDate}>Departure Date: {formattedDepartDay}</Text> {/* Thêm thông tin ngày đi */}
+      </View>
+
+      {/* Trip Return */}
+      <View style={styles.tripSummary}>
+        <Text style={styles.tripTitle}>Return trip to {flight.return.toCode}</Text>
+        <Text style={styles.tripSubtitle}>{flight.return.fromCode} - {flight.return.toCode}</Text>
+        <Text style={styles.tripDate}>{flight.return.departTime} - {flight.return.arriveTime}</Text>
+        <Text style={styles.tripInfo}>{flight.return.stops} stop • {flight.return.duration}</Text>
+        <Text style={styles.tripDate}>Return Date: {formattedReturnDay}</Text> {/* Thêm thông tin ngày về */}
       </View>
 
       {/* Additional Info */}

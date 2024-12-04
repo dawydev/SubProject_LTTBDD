@@ -152,7 +152,14 @@ const SearchResultScreen = () => {
   };
 
   const renderFlightItem = ({ item }) => (
-    <TouchableOpacity style={styles.flightCard} onPress={() => navigation.navigate('FlightDetailScreen', { flight: item, travellers, cabinType, tripType })}>
+    <TouchableOpacity style={styles.flightCard} onPress={() => navigation.navigate('FlightDetailScreen', { 
+      flight: item, 
+      travellers, 
+      cabinType, 
+      tripType, 
+      departDay, 
+      returnDay // Truyền thêm departDay và returnDay
+    })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />
         <View style={{ flex: 1, marginLeft: 10 }}>
