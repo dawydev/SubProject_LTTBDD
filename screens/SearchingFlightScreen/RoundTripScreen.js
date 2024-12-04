@@ -5,7 +5,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
-import SearchResultScreen from '../SearchResultScreen/SearchResultScreen.js';
 
 // Định dạng ngày hôm nay với thứ viết tắt, tháng viết tắt và ngày
 const formatDate = (date) => {
@@ -37,6 +36,25 @@ const RoundTrip = () => {
     const [selectedDateType, setSelectedDateType] = useState('');
     const [fromCity, setFromCity] = useState('From');
     const [toCity, setToCity] = useState('To');
+    const [travellers, setTravellers] = useState(1); // Giả sử bạn có state cho số lượng hành khách
+    const [cabinType, setCabinType] = useState('Economy'); // Giả sử bạn có state cho loại cabin
+    const [tripType, setTripType] = useState('RoundTrip'); // Giả sử bạn có state cho loại chuyến bay
+    const handleSearchFlight = () => {
+        const travellers = adults + children + infants;
+        const cabinType = selectedCabin;
+        const tripType = 'RoundTrip'; // Giả sử bạn có loại chuyến bay cố định là RoundTrip
+    
+        navigation.navigate('SearchResultScreen', {
+          fromCity,
+          toCity,
+          departDay,
+          returnDay,
+          travellers,
+          cabinType,
+          tripType,
+        });
+      };
+    
     const toggleModalFrom = () => {
         setFromModalVisible(!isFromModalVisible);
     };
@@ -335,25 +353,6 @@ const RoundTrip = () => {
                 <MaterialCommunityIcons name="chevron-down" size={27} color="#757575" style={{ marginLeft: 70 }} />
             </TouchableOpacity>
 
-            {/* Nút Search Flight */}
-            <TouchableOpacity
-                style={styles.searchFlightButton}
-                onPress={() =>
-                    navigation.navigate('SearchResultScreen', {
-                        fromCity,
-                        toCity,
-                        departDay,
-                        returnDay,
-                        adults,
-                        children,
-                        infants,
-                        selectedCabin,
-                    })
-                }
-            >
-                <Text style={styles.searchFlightText}>Search Flight</Text>
-            </TouchableOpacity>
-
             {/* "Where From" Modal */}
             <Modal visible={isFromModalVisible} animationType="slide" transparent={true}>
             <View style={styles.modalContainer}>
@@ -465,117 +464,107 @@ const RoundTrip = () => {
                 </View>
             </Modal>
 
-        {/*  Modal Option */}
-        <Modal visible={isOptionModalVisible} animationType="slide" transparent={true}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        {/* Header */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <Text style={styles.modalTitle}>Options</Text>
-                            <TouchableOpacity onPress={toggleModalOptional}>
-                                <MaterialCommunityIcons name="close" size={24} color="#919398" />
-                            </TouchableOpacity>
-                        </View>
+        {/* Modal Option */}
+      <Modal visible={isOptionModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {/* Header */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={styles.modalTitle}>Options</Text>
+              <TouchableOpacity onPress={toggleModalOptional}>
+                <MaterialCommunityIcons name="close" size={24} color="#919398" />
+              </TouchableOpacity>
+            </View>
 
-                        {/* Traveller Section */}
-                        <Text style={styles.sectionTitle}>Traveller</Text>
-                        <View style={styles.row}>
-                            <View style={{flexDirection: 'column', flex:1}}>
-                            <Text style={styles.label}>Adults</Text>
-                            <Text style={styles.sublabel}>12+ years</Text>
-                            </View>
-                            <View style={styles.counter}>
-                                <TouchableOpacity
-                                    onPress={() => setAdults(Math.max(0, adults - 1))}
-                                    style={styles.counterButton}
-                                >
-                                    <MaterialCommunityIcons name="minus" size={20} color="#757575" />
-                                </TouchableOpacity>
-                                <Text>{adults}</Text>
-                                <TouchableOpacity
-                                    onPress={() => setAdults(adults + 1)}
-                                    style={styles.counterButton}
-                                >
-                                    <MaterialCommunityIcons name="plus" size={20} color="#757575" />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={styles.row}>
-                            <View style={{flexDirection: 'column', flex:1}}>
-                                <Text style={styles.label}>Children</Text>
-                                <Text style={styles.sublabel}>2-12 years</Text>
-                            </View>
-                            <View style={styles.counter}>
-                                <TouchableOpacity
-                                    onPress={() => setChildren(Math.max(0, children - 1))}
-                                    style={styles.counterButton}
-                                >
-                                    <MaterialCommunityIcons name="minus" size={20} color="#757575" />
-                                </TouchableOpacity>
-                                <Text>{children}</Text>
-                                <TouchableOpacity
-                                    onPress={() => setChildren(children + 1)}
-                                    style={styles.counterButton}
-                                >
-                                    <MaterialCommunityIcons name="plus" size={20} color="#757575" />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={styles.row}>
-                            <View style={{flexDirection: 'column', flex:1}}>
-                                <Text style={styles.label}>Infants</Text>
-                                <Text style={styles.sublabel}>Under 2 years</Text>
-                            </View>
-                            <View style={styles.counter}>
-                                <TouchableOpacity
-                                    onPress={() => setInfants(Math.max(0, infants - 1))}
-                                    style={styles.counterButton}
-                                >
-                                    <MaterialCommunityIcons name="minus" size={20} color="#757575" />
-                                </TouchableOpacity>
-                                <Text>{infants}</Text>
-                                <TouchableOpacity
-                                    onPress={() => setInfants(infants + 1)}
-                                    style={styles.counterButton}
-                                >
-                                    <MaterialCommunityIcons name="plus" size={20} color="#757575" />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+            {/* Traveller Section */}
+            <Text style={styles.sectionTitle}>Traveller</Text>
+            <View style={styles.row}>
+              <View style={{ flexDirection: 'column', flex: 1 }}>
+                <Text style={styles.label}>Adults</Text>
+                <Text style={styles.sublabel}>12+ years</Text>
+              </View>
+              <View style={styles.counter}>
+                <TouchableOpacity onPress={() => setAdults(Math.max(0, adults - 1))} style={styles.counterButton}>
+                  <MaterialCommunityIcons name="minus" size={20} color="#757575" />
+                </TouchableOpacity>
+                <Text>{adults}</Text>
+                <TouchableOpacity onPress={() => setAdults(adults + 1)} style={styles.counterButton}>
+                  <MaterialCommunityIcons name="plus" size={20} color="#757575" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.row}>
+              <View style={{ flexDirection: 'column', flex: 1 }}>
+                <Text style={styles.label}>Children</Text>
+                <Text style={styles.sublabel}>2-12 years</Text>
+              </View>
+              <View style={styles.counter}>
+                <TouchableOpacity onPress={() => setChildren(Math.max(0, children - 1))} style={styles.counterButton}>
+                  <MaterialCommunityIcons name="minus" size={20} color="#757575" />
+                </TouchableOpacity>
+                <Text>{children}</Text>
+                <TouchableOpacity onPress={() => setChildren(children + 1)} style={styles.counterButton}>
+                  <MaterialCommunityIcons name="plus" size={20} color="#757575" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.row}>
+              <View style={{ flexDirection: 'column', flex: 1 }}>
+                <Text style={styles.label}>Infants</Text>
+                <Text style={styles.sublabel}>Under 2 years</Text>
+              </View>
+              <View style={styles.counter}>
+                <TouchableOpacity onPress={() => setInfants(Math.max(0, infants - 1))} style={styles.counterButton}>
+                  <MaterialCommunityIcons name="minus" size={20} color="#757575" />
+                </TouchableOpacity>
+                <Text>{infants}</Text>
+                <TouchableOpacity onPress={() => setInfants(infants + 1)} style={styles.counterButton}>
+                  <MaterialCommunityIcons name="plus" size={20} color="#757575" />
+                </TouchableOpacity>
+              </View>
+            </View>
 
-                        {/* Cabin Class Section */}
-                        <Text style={styles.sectionTitle}>Cabin Class</Text>
-                        {['Economy', 'Premium Economy', 'Business', 'First'].map((cabin) => (
-                            <TouchableOpacity
-                                key={cabin}
-                                style={styles.cabinOption}
-                                onPress={() => setSelectedCabin(cabin)}
-                            >
-                                <Text
-                                    style={[
-                                        styles.cabinText,
-                                        selectedCabin === cabin && styles.selectedCabinText,
-                                    ]}
-                                >
-                                    {cabin}
-                                </Text>
-                                {selectedCabin === cabin && (
-                                    <MaterialCommunityIcons
-                                        name="check"
-                                        size={20}
-                                        color="#000"
-                                    />
-                                )}
-                            </TouchableOpacity>
-                        ))}
+            {/* Cabin Class Section */}
+            <Text style={styles.sectionTitle}>Cabin Class</Text>
+            {['Economy', 'Premium Economy', 'Business', 'First'].map((cabin) => (
+              <TouchableOpacity key={cabin} style={styles.cabinOption} onPress={() => setSelectedCabin(cabin)}>
+                <Text style={[styles.cabinText, selectedCabin === cabin && styles.selectedCabinText]}>
+                  {cabin}
+                </Text>
+                {selectedCabin === cabin && (
+                  <MaterialCommunityIcons name="check" size={20} color="#000" />
+                )}
+              </TouchableOpacity>
+            ))}
 
-                            {/* Done Button */}
-                            <TouchableOpacity style={styles.doneButtonOptions} onPress={handleDone}>
-                                <Text style={styles.doneButtonText}>Done</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-            </Modal>
+            {/* Done Button */}
+            <TouchableOpacity style={styles.doneButtonOptions} onPress={handleDone}>
+              <Text style={styles.doneButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {/* Nút Search Flight */}
+      <TouchableOpacity
+                style={styles.searchFlightButton}
+                onPress={() =>
+                    navigation.navigate('SearchResultScreen', {
+                        fromCity,
+                        toCity,
+                        departDay,
+                        returnDay,
+                        adults,
+                        children,
+                        infants,
+                        selectedCabin,
+                        tripType,
+                        cabinType,
+                        travellers
+                    })
+                }
+            >
+                <Text style={styles.searchFlightText}>Search Flight</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 };

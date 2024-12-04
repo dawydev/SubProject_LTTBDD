@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import a from '@ant-design/react-native/lib/modal/alert';
 
 const flightData = [
   {
@@ -17,6 +18,7 @@ const flightData = [
       airline: 'SkyHaven',
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
+      country: 'United States',
     },
     return: {
       departTime: '10:00 PM',
@@ -27,6 +29,7 @@ const flightData = [
       airline: 'EcoWings',
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
+      country: 'United Kingdom',
     },
     price: '$654',
   },
@@ -41,6 +44,7 @@ const flightData = [
       airline: 'CC Air',
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
+      country: 'United States',
     },
     return: {
       departTime: '6:30 PM',
@@ -51,6 +55,7 @@ const flightData = [
       airline: 'Fendi Air',
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
+      country: 'United Kingdom',
     },
     price: '$964',
   },
@@ -65,6 +70,7 @@ const flightData = [
       airline: 'EcoWings',
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
+      country: 'United States',
     },
     return: {
       departTime: '7:55 AM',
@@ -75,6 +81,7 @@ const flightData = [
       airline: 'EcoWings',
       fromCode: 'JFK', // New York JFK
       toCode: 'LHR', // London Heathrow
+      country: 'United Kingdom',
     },
     price: '$964',
   },
@@ -82,7 +89,7 @@ const flightData = [
 
 const SearchResultScreen = () => {
   const route = useRoute();
-  const { fromCity, toCity, departDay, returnDay, adults, children, infants, selectedCabin } = route.params;
+  const { fromCity, toCity, departDay, returnDay, adults, children, infants, cabinType, tripType } = route.params;
   const navigation = useNavigation();
   const [favoriteFlights, setFavoriteFlights] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -92,6 +99,8 @@ const SearchResultScreen = () => {
   const [filteredData, setFilteredData] = useState(flightData);
   const stopsOptions = ["Any stops", "1 stop or nonstop", "Nonstop only"];
   const airlinesOptions = ["SkyHaven", "EcoWings", "AirFly"];
+
+  const travellers = adults + children + infants;
 
   const toggleFavorite = (id) => {
     setFavoriteFlights((prevFavorites) => {
@@ -143,7 +152,7 @@ const SearchResultScreen = () => {
   };
 
   const renderFlightItem = ({ item }) => (
-    <TouchableOpacity style={styles.flightCard} onPress={() => navigation.navigate('FlightDetailScreen', { flight: item })}>
+    <TouchableOpacity style={styles.flightCard} onPress={() => navigation.navigate('FlightDetailScreen', { flight: item, travellers, cabinType, tripType })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />
         <View style={{ flex: 1, marginLeft: 10 }}>
@@ -163,7 +172,7 @@ const SearchResultScreen = () => {
           </View>
         </View>
       </View>
-  
+
       <View style={styles.flightRow}>
         <Image source={{ uri: item.return.airportIconImg }} style={styles.airportIcon} />
         <View style={{ flex: 1, marginLeft: 10 }}>
@@ -183,14 +192,10 @@ const SearchResultScreen = () => {
           </View>
         </View>
       </View>
-  
+
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderColor: 'gray' }}>
         <TouchableOpacity onPress={() => toggleFavorite(item.id)} style={{ marginRight: 'auto', marginTop: 10 }}>
-          <MaterialCommunityIcons
-            name="heart"
-            size={27}
-            color={favoriteFlights[item.id] ? 'red' : 'gray'}
-          />
+          <MaterialCommunityIcons name="heart" size={27} color={favoriteFlights[item.id] ? 'red' : 'gray'} />
         </TouchableOpacity>
         <Text style={{ marginLeft: 'auto', fontSize: 18, fontWeight: 'bold', color: '#000', marginTop: 10 }}>{item.price}</Text>
       </View>
@@ -201,7 +206,7 @@ const SearchResultScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.routeText}>{fromCity} - {toCity}</Text>
-        <Text style={styles.detailsText}>{departDay.toString()} - {returnDay.toString()}, {adults + children + infants} traveller(s)</Text>
+        <Text style={styles.detailsText}>{departDay.toString()} - {returnDay.toString()}, {travellers} traveller(s)</Text>
       </View>
 
       <View style={styles.filterRow}>
@@ -241,25 +246,12 @@ const SearchResultScreen = () => {
             {/* Sort By */}
             <Text style={styles.sectionTitle}>Sort by</Text>
             {["Best", "Cheap", "Fast"].map((sortOption) => (
-              <TouchableOpacity
-                key={sortOption}
-                style={styles.cabinOption}
-                onPress={() => setSelectedSort(sortOption)}
-              >
-                <Text
-                  style={[
-                    styles.cabinText,
-                    selectedSort === sortOption && styles.selectedCabinText,
-                  ]}
-                >
+              <TouchableOpacity key={sortOption} style={styles.cabinOption} onPress={() => setSelectedSort(sortOption)}>
+                <Text style={[styles.cabinText, selectedSort === sortOption && styles.selectedCabinText]}>
                   {sortOption}
                 </Text>
                 {selectedSort === sortOption && (
-                  <MaterialCommunityIcons
-                    name="check"
-                    size={20}
-                    color="#000"
-                  />
+                  <MaterialCommunityIcons name="check" size={20} color="#000" />
                 )}
               </TouchableOpacity>
             ))}
@@ -267,77 +259,39 @@ const SearchResultScreen = () => {
             {/* Stops */}
             <Text style={styles.sectionTitle}>Stops</Text>
             {stopsOptions.map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={styles.cabinOption}
-                onPress={() => setSelectedStops(option)}
-              >
-                <Text
-                  style={[
-                    styles.cabinText,
-                    selectedStops === option && styles.selectedCabinText,
-                  ]}
-                >
+              <TouchableOpacity key={option} style={styles.cabinOption} onPress={() => setSelectedStops(option)}>
+                <Text style={[styles.cabinText, selectedStops === option && styles.selectedCabinText]}>
                   {option}
                 </Text>
                 {selectedStops === option && (
-                  <MaterialCommunityIcons
-                    name="check"
-                    size={20}
-                    color="#000"
-                  />
+                  <MaterialCommunityIcons name="check" size={20} color="#000" />
                 )}
               </TouchableOpacity>
             ))}
 
             {/* Airlines */}
             <Text style={styles.sectionTitle}>Airlines</Text>
-            <TouchableOpacity
-              style={styles.cabinOption}
-              onPress={() => {
-                if (selectedAirlines.length === airlinesOptions.length) {
-                  setSelectedAirlines([]);
-                } else {
-                  setSelectedAirlines(airlinesOptions);
-                }
-              }}
-            >
-              <Text
-                style={[
-                  styles.cabinText,
-                  selectedAirlines.length === airlinesOptions.length && styles.selectedCabinText,
-                ]}
-              >
+            <TouchableOpacity style={styles.cabinOption} onPress={() => {
+              if (selectedAirlines.length === airlinesOptions.length) {
+                setSelectedAirlines([]);
+              } else {
+                setSelectedAirlines(airlinesOptions);
+              }
+            }}>
+              <Text style={[styles.cabinText, selectedAirlines.length === airlinesOptions.length && styles.selectedCabinText]}>
                 Select all
               </Text>
               {selectedAirlines.length === airlinesOptions.length && (
-                <MaterialCommunityIcons
-                  name="check"
-                  size={20}
-                  color="#000"
-                />
+                <MaterialCommunityIcons name="check" size={20} color="#000" />
               )}
             </TouchableOpacity>
             {airlinesOptions.map((airline) => (
-              <TouchableOpacity
-                key={airline}
-                style={styles.cabinOption}
-                onPress={() => toggleAirline(airline)}
-              >
-                <Text
-                  style={[
-                    styles.cabinText,
-                    selectedAirlines.includes(airline) && styles.selectedCabinText,
-                  ]}
-                >
+              <TouchableOpacity key={airline} style={styles.cabinOption} onPress={() => toggleAirline(airline)}>
+                <Text style={[styles.cabinText, selectedAirlines.includes(airline) && styles.selectedCabinText]}>
                   {airline}
                 </Text>
                 {selectedAirlines.includes(airline) && (
-                  <MaterialCommunityIcons
-                    name="check"
-                    size={20}
-                    color="#000"
-                  />
+                  <MaterialCommunityIcons name="check" size={20} color="#000" />
                 )}
               </TouchableOpacity>
             ))}
@@ -408,7 +362,6 @@ const styles = StyleSheet.create({
   codeText: {
     fontSize: 18,
     color: '#919398',
-    
   },
   airlineText: {
     color: '#919398',

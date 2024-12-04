@@ -1,38 +1,98 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const FlightDetailScreen = ({ route }) => {
-  const { flight } = route.params;
+  const { flight, travellers, cabinType, tripType } = route.params;
+  const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Chi tiết chuyến bay</Text>
-      <Text style={styles.detail}>Từ: {flight.depart.fromCode}</Text>
-      <Text style={styles.detail}>Đến: {flight.depart.toCode}</Text>
-      <Text style={styles.detail}>Hãng: {flight.depart.airline}</Text>
-      <Text style={styles.detail}>Giờ khởi hành: {flight.depart.departTime}</Text>
-      <Text style={styles.detail}>Giờ đến: {flight.depart.arriveTime}</Text>
-      <Text style={styles.detail}>Thời gian bay: {flight.depart.duration}</Text>
-      <Text style={styles.detail}>Số điểm dừng: {flight.depart.stops}</Text>
-      <Text style={styles.detail}>Giá: {flight.price}</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Flight details</Text>
+      </View>
+
+      {/* Trip Info */}
+      <View style={styles.tripInfo}>
+        <Text style={styles.tripInfoText}>Your trip to {flight.depart.country} from {flight.return.country}</Text>
+      </View>
+
+      {/* Trip summary */}
+      <View style={styles.tripSummary}>
+        <Text style={styles.tripTitle}>Your trip to {flight.depart.toCode}</Text>
+        <Text style={styles.tripSubtitle}>{flight.depart.fromCode} - {flight.depart.toCode}</Text>
+        <Text style={styles.tripDate}>{flight.depart.departTime} - {flight.depart.arriveTime}</Text>
+        <Text style={styles.tripInfo}>{flight.depart.stops} stop • {flight.depart.duration}</Text>
+      </View>
+
+      {/* Additional Info */}
+      <View style={styles.additionalInfo}>
+        <Text style={styles.infoText}>Travellers: {travellers}</Text>
+        <Text style={styles.infoText}>Cabin Type: {cabinType}</Text>
+        <Text style={styles.infoText}>Trip Type: {tripType}</Text>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
-  detail: {
+  backButton: {
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  tripInfo: {
+    padding: 16,
+    backgroundColor: '#f0f0f0',
+  },
+  tripInfoText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  tripSummary: {
+    padding: 16,
+  },
+  tripTitle: {
     fontSize: 18,
-    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  tripSubtitle: {
+    fontSize: 16,
+    color: '#555',
+  },
+  tripDate: {
+    fontSize: 14,
+    color: '#777',
+  },
+  tripInfo: {
+    fontSize: 14,
+    color: '#777',
+  },
+  additionalInfo: {
+    padding: 16,
+    backgroundColor: '#e0e0e0',
+  },
+  infoText: {
+    fontSize: 16,
+    marginBottom: 8,
   },
 });
 
