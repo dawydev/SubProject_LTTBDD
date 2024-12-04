@@ -358,7 +358,7 @@ const RoundTrip = () => {
             <Modal visible={isFromModalVisible} animationType="slide" transparent={true}>
             <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
+                        <View style={{ flexDirection: 'roư', justifyContent: 'center', marginBottom: 20 }}>
                             <Text style={styles.modalTitle}>Where from?</Text>
                             <TouchableOpacity onPress={toggleModalFrom} style={styles.closeButton}>
                                 <MaterialCommunityIcons name="close" size={27} color="#919398" />
