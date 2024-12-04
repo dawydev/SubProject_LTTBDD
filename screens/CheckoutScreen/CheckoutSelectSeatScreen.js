@@ -113,7 +113,16 @@ const CheckoutSelectSeatScreen = () => {
         <View style={styles.footer}>
           <Text style={styles.footerText}>Seat {selectedSeat} - ${seatPrice}</Text>
           <TouchableOpacity style={styles.selectButton} onPress={() => {
-            const totalPrice = parseFloat(price) + seatPrice; // Đảm bảo price là số trước khi cộng
+            if (price === undefined) {
+              console.error("Price is undefined");
+              return;
+            }
+            const parsedPrice = parseFloat(price);
+            if (isNaN(parsedPrice)) {
+              console.error("Invalid price value:", price);
+              return;
+            }
+            const totalPrice = parsedPrice + seatPrice; // Đảm bảo price là số trước khi cộng
             navigation.navigate('CheckoutSeatScreen', {
               flight,
               travellers,

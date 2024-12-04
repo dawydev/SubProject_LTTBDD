@@ -46,7 +46,7 @@ const CheckoutSeatScreen = () => {
           <Text style={styles.selectedSeatText}>Selected Seat: {selectedSeat}</Text>
         )}
         <View style={styles.selectSeatButtonContainer}>
-          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'depart', flight, travellers, planeCode: departPlaneCode, seats: flight.seats })}>
+          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'depart', flight, travellers, planeCode: departPlaneCode, seats: flight.seats, price })}>
             <Text style={styles.selectSeatButtonText}>Select Seat</Text>
           </TouchableOpacity>
         </View>
@@ -60,7 +60,7 @@ const CheckoutSeatScreen = () => {
           <Text style={styles.selectedSeatText}>Selected Seat: {selectedSeat}</Text>
         )}
         <View style={styles.selectSeatButtonContainer}>
-          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'return', flight, travellers, planeCode: returnPlaneCode, seats: flight.seats })}>
+          <TouchableOpacity style={styles.selectSeatButton} onPress={() => navigation.navigate('CheckoutSelectSeatScreen', { tripType: 'return', flight, travellers, planeCode: returnPlaneCode, seats: flight.seats, price })}>
             <Text style={styles.selectSeatButtonText}>Select Seat</Text>
           </TouchableOpacity>
         </View>
