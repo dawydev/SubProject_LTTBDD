@@ -7,81 +7,75 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const flightData = [
   {
     id: '1',
-    type: 'depart',
-    departTime: '6:30 AM',
-    arriveTime: '2:00 PM',
-    duration: '7h30m',
-    stops: '1 stop',
-    airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
-    airline: 'SkyHaven',
+    depart: {
+      departTime: '6:30 AM',
+      arriveTime: '2:00 PM',
+      duration: '7h30m',
+      stops: '1 stop',
+      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airline: 'SkyHaven',
+      fromCode: 'LHR', // London Heathrow
+      toCode: 'JFK', // New York JFK
+    },
+    return: {
+      departTime: '10:00 PM',
+      arriveTime: '10:15 AM',
+      duration: '7h15m',
+      stops: 'Direct',
+      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airline: 'EcoWings',
+      fromCode: 'JFK', // New York JFK
+      toCode: 'LHR', // London Heathrow
+    },
     price: '$806',
-    fromCode: 'LHR', // London Heathrow
-    toCode: 'JFK', // New York JFK
-  },
-  {
-    id: '1',
-    type: 'return',
-    departTime: '10:00 PM',
-    arriveTime: '10:15 AM',
-    duration: '7h15m',
-    stops: 'Direct',
-    airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
-    airline: 'EcoWings',
-    price: '$806',
-    fromCode: 'JFK', // New York JFK
-    toCode: 'LHR', // London Heathrow
   },
   {
     id: '2',
-    type: 'depart',
-    departTime: '3:15 PM',
-    arriveTime: '6:05 PM',
-    duration: '7h50m',
-    stops: 'Direct',
-    airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
-    airline: 'CC Air',
+    depart: {
+      departTime: '3:15 PM',
+      arriveTime: '6:05 PM',
+      duration: '7h50m',
+      stops: 'Direct',
+      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airline: 'CC Air',
+      fromCode: 'LHR', // London Heathrow
+      toCode: 'JFK', // New York JFK
+    },
+    return: {
+      departTime: '6:30 PM',
+      arriveTime: '6:30 AM',
+      duration: '7h00m',
+      stops: 'Direct',
+      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airline: 'Fendi Air',
+      fromCode: 'JFK', // New York JFK
+      toCode: 'LHR', // London Heathrow
+    },
     price: '$964',
-    fromCode: 'LHR', // London Heathrow
-    toCode: 'JFK', // New York JFK
-  },
-  {
-    id: '2',
-    type: 'return',
-    departTime: '6:30 PM',
-    arriveTime: '6:30 AM',
-    duration: '7h00m',
-    stops: 'Direct',
-    airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
-    airline: 'Fendi Air',
-    price: '$964',
-    fromCode: 'JFK', // New York JFK
-    toCode: 'LHR', // London Heathrow
-  },
-  {
-    id: '3',
-    type: 'depart',
-    departTime: '3:15 PM',
-    arriveTime: '7:50 PM',
-    duration: '7h30m',
-    stops: 'Direct',
-    airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
-    airline: 'EcoWings',
-    price: '$964',
-    fromCode: 'LHR', // London Heathrow
-    toCode: 'JFK', // New York JFK
   },
   {
     id: '3',
-    type: 'return',
-    departTime: '7:55 AM',
-    arriveTime: '2:55 PM',
-    duration: '6h40m',
-    stops: 'Direct',
-    airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
-    airline: 'EcoWings',
+    depart: {
+      departTime: '3:15 PM',
+      arriveTime: '7:50 PM',
+      duration: '7h30m',
+      stops: 'Direct',
+      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airline: 'EcoWings',
+      fromCode: 'LHR', // London Heathrow
+      toCode: 'JFK', // New York JFK
+    },
+    return: {
+      departTime: '7:55 AM',
+      arriveTime: '2:55 PM',
+      duration: '6h40m',
+      stops: 'Direct',
+      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airline: 'EcoWings',
+      fromCode: 'JFK', // New York JFK
+      toCode: 'LHR', // London Heathrow
+    },
     price: '$964',
-    fromCode: 'JFK', // New York JFK
-    toCode: 'LHR', // London Heathrow
   },
 ];
 
@@ -101,38 +95,43 @@ const SearchResultScreen = () => {
   const renderFlightItem = ({ item }) => (
     <TouchableOpacity style={styles.flightCard} onPress={() => console.log('Flight selected', item.id)}>
       <View style={styles.flightRow}>
-        <Image source={{ uri: item.airportIconImg }} style={styles.airportIcon} />
+        <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />
         <View style={{ flex: 1 }}>
           <View style={styles.flightRow}>
-            <Text style={styles.timeText}>{item.departTime}</Text>
+            <Text style={styles.timeText}>{item.depart.departTime}</Text>
             <Text style={styles.timeText}>—</Text>
-            <Text style={styles.timeText}>{item.arriveTime}</Text>
+            <Text style={styles.timeText}>{item.depart.arriveTime}</Text>
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
-              <Text style={styles.durationText}>{item.duration}</Text>
+              <Text style={styles.durationText}>{item.depart.duration}</Text>
             </View>
           </View>
           <View style={styles.flightRow}>
-            <Text style={styles.codeText}>{item.fromCode}</Text>
+            <Text style={styles.codeText}>{item.depart.fromCode}</Text>
             <Text style={styles.codeText}>—</Text>
-            <Text style={styles.codeText}>{item.toCode}</Text>
-            <Text style={styles.airlineText}>{item.airline}, {item.stops}</Text>
+            <Text style={styles.codeText}>{item.depart.toCode}</Text>
+            <Text style={styles.airlineText}>{item.depart.airline}, {item.depart.stops}</Text>
           </View>
         </View>
       </View>
   
       <View style={styles.flightRow}>
-        <Text style={styles.timeText}>{item.returnDepart}</Text>
-        <Text style={styles.timeText}>—</Text>
-        <Text style={styles.timeText}>{item.returnArrive}</Text>
-        <View style={{ flex: 1, alignItems: 'flex-end' }}>
-          <Text style={styles.durationText}>{item.returnDuration}</Text>
+        <Image source={{ uri: item.return.airportIconImg }} style={styles.airportIcon} />
+        <View style={{ flex: 1 }}>
+          <View style={styles.flightRow}>
+            <Text style={styles.timeText}>{item.return.departTime}</Text>
+            <Text style={styles.timeText}>—</Text>
+            <Text style={styles.timeText}>{item.return.arriveTime}</Text>
+            <View style={{ flex: 1, alignItems: 'flex-end' }}>
+              <Text style={styles.durationText}>{item.return.duration}</Text>
+            </View>
+          </View>
+          <View style={styles.flightRow}>
+            <Text style={styles.codeText}>{item.return.fromCode}</Text>
+            <Text style={styles.codeText}>—</Text>
+            <Text style={styles.codeText}>{item.return.toCode}</Text>
+            <Text style={styles.airlineText}>{item.return.airline}, {item.return.stops}</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.flightRow}>
-        <Text style={styles.codeText}>{item.toCode}</Text>
-        <Text style={styles.codeText}>—</Text>
-        <Text style={styles.codeText}>{item.fromCode}</Text>
-        <Text style={styles.airlineText}>{item.returnAirline}, {item.returnStops}</Text>
       </View>
   
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderColor: 'gray' }}>
