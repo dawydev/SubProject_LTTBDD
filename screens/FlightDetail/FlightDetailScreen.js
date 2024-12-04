@@ -1,19 +1,75 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
+const formatDate = (date) => {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return "Invalid date";
+  }
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  }).format(date);
+};
+
 const FlightDetailScreen = ({ route }) => {
-  const { flight, travellers, cabinType, tripType, departDay, returnDay } = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants } = route.params;
   const navigation = useNavigation();
 
-  // Chuyển đổi đối tượng Date thành chuỗi
-  const formattedDepartDay = new Date(departDay).toLocaleDateString();
-  const formattedReturnDay = new Date(returnDay).toLocaleDateString();
+  const formattedDepartDay = formatDate(new Date(departDay)); // Định dạng ngày đi
+  const formattedReturnDay = formatDate(new Date(returnDay)); // Định dạng ngày về
+
+  // Hàm dùng để hiển thị thông tin chuyến bay (có thể dùng cho cả chuyến đi và chuyến về)
+  const renderFlightInfo = (title, flightDetails, date) => (
+    <View style={styles.flightSection}>
+      {/* Tiêu đề chuyến bay (ví dụ: "Departure Flight" hoặc "Return Flight") */}
+      <Text style={styles.flightTitle}>{title}</Text>
+
+      {/* Thông tin tuyến đường và thời gian bay */}
+      <View style={styles.flightRow}>
+        <Text style={styles.flightRoute}>
+          {flightDetails.fromCode} → {flightDetails.toCode}
+        </Text>
+        <Text style={styles.flightDuration}>
+          {flightDetails.stops} {flightDetails.duration}
+        </Text>
+      </View>
+
+      {/* Giờ khởi hành, giờ đến và ngày bay */}
+      <View style={styles.flightRow}>
+        <Text style={styles.flightTime}>
+          {flightDetails.departTime} → {flightDetails.arriveTime}
+        </Text>
+        <Text style={styles.flightDate}>{date}</Text>
+      </View>
+
+      {/* Các tiện ích của chuyến bay */}
+      <View style={styles.flightFeatures}>
+        <View style={styles.feature}>
+          <MaterialCommunityIcons name="seat-recline-extra" size={18} color="#000" />
+          <Text style={styles.featureText}>28" seat pitch</Text>
+        </View>
+        <View style={styles.feature}>
+          <FontAwesome name="cutlery" size={18} color="#000" />
+          <Text style={styles.featureText}>Light meal</Text>
+        </View>
+        <View style={styles.feature}>
+          <MaterialCommunityIcons name="wifi" size={18} color="#000" />
+          <Text style={styles.featureText}>Chance of WiFi</Text>
+        </View>
+        <View style={styles.feature}>
+          <MaterialCommunityIcons name="power-plug-off" size={18} color="#000" />
+          <Text style={styles.featureText}>No power outlet</Text>
+        </View>
+      </View>
+    </View>
+  );
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
+      {/* Header của màn hình chi tiết chuyến bay */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
@@ -21,35 +77,55 @@ const FlightDetailScreen = ({ route }) => {
         <Text style={styles.headerTitle}>Flight details</Text>
       </View>
 
-      {/* Trip Info */}
+      {/* Thông tin tổng quan về chuyến đi */}
       <View style={styles.tripInfo}>
-        <Text style={styles.tripInfoText}>Your trip to {flight.depart.country} from {flight.return.country}</Text>
+        <Text style={styles.tripInfoText}>
+          <View style={{flexDirection: 'column'}}>
+            <Text style={styles.tripInfoText}>Your trip to {flight.depart.country} </Text>
+            <Text style={styles.tripInfoText1}>from {flight.depart.country} </Text>
+          </View>
+        </Text>
+        <View style={styles.tripDatesContainer}>
+          <Text style={styles.tripDates}>
+            {formattedDepartDay} - {formattedReturnDay}
+          </Text>
+        </View>
+        <View style={styles.tripDetailsContainer}>
+          <Text style={styles.tripDetails}>
+            <MaterialCommunityIcons 
+              name={
+                adults + children + infants > 2 
+                ? "account-group" 
+                : adults + children + infants === 2 
+                ? "account-multiple" 
+                : "account"
+              } 
+              size={20} 
+              color="#000" 
+            /> {travellers} traveller • 
+            <MaterialCommunityIcons 
+              name={
+                cabinType === "Economy"
+                ? "seat-passenger"
+                : cabinType === "Premium Economy"
+                ? "seat-passenger"
+                : cabinType === "Business"
+                ? "briefcase-outline"
+                : "star-outline"
+              } 
+              size={20} 
+              color="#000" 
+            /> {cabinType} • 
+            <MaterialCommunityIcons name="airplane" size={20} color="#000" /> {tripType}
+          </Text>
+        </View>
       </View>
 
-      {/* Trip summary */}
-      <View style={styles.tripSummary}>
-        <Text style={styles.tripTitle}>Your trip to {flight.depart.toCode}</Text>
-        <Text style={styles.tripSubtitle}>{flight.depart.fromCode} - {flight.depart.toCode}</Text>
-        <Text style={styles.tripDate}>{flight.depart.departTime} - {flight.depart.arriveTime}</Text>
-        <Text style={styles.tripInfo}>{flight.depart.stops} stop • {flight.depart.duration}</Text>
-        <Text style={styles.tripDate}>Departure Date: {formattedDepartDay}</Text> {/* Thêm thông tin ngày đi */}
-      </View>
+      {/* Hiển thị thông tin chuyến đi (departure flight) */}
+      {renderFlightInfo("Departure Flight", flight.depart, formattedDepartDay)}
 
-      {/* Trip Return */}
-      <View style={styles.tripSummary}>
-        <Text style={styles.tripTitle}>Return trip to {flight.return.toCode}</Text>
-        <Text style={styles.tripSubtitle}>{flight.return.fromCode} - {flight.return.toCode}</Text>
-        <Text style={styles.tripDate}>{flight.return.departTime} - {flight.return.arriveTime}</Text>
-        <Text style={styles.tripInfo}>{flight.return.stops} stop • {flight.return.duration}</Text>
-        <Text style={styles.tripDate}>Return Date: {formattedReturnDay}</Text> {/* Thêm thông tin ngày về */}
-      </View>
-
-      {/* Additional Info */}
-      <View style={styles.additionalInfo}>
-        <Text style={styles.infoText}>Travellers: {travellers}</Text>
-        <Text style={styles.infoText}>Cabin Type: {cabinType}</Text>
-        <Text style={styles.infoText}>Trip Type: {tripType}</Text>
-      </View>
+      {/* Hiển thị thông tin chuyến về (return flight) */}
+      {renderFlightInfo("Return Flight", flight.return, formattedReturnDay)}
     </ScrollView>
   );
 };
@@ -57,56 +133,116 @@ const FlightDetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', 
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Sắp xếp các phần tử theo hàng ngang
     alignItems: 'center',
     padding: 16,
-    borderBottomWidth: 1,
+    borderBottomWidth: 1, // Đường kẻ dưới header
     borderBottomColor: '#ddd',
   },
   backButton: {
-    marginRight: 16,
+    marginRight: 16, // Khoảng cách giữa nút "Back" và tiêu đề
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: 'bold', // Chữ đậm
   },
   tripInfo: {
     padding: 16,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'white', // Màu nền nhạt để phân biệt
   },
   tripInfoText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 23,
+    fontWeight: '700',
+    marginBottom: 4, // Khoảng cách phía dưới
   },
-  tripSummary: {
+  tripInfoText1: {
+    fontSize: 18,
+    fontWeight: '400',
+    marginBottom: 4, // Khoảng cách phía dưới
+    color: '#9E9E9E', // Màu xám nhạt
+  },
+  tripDates: {
+    fontSize: 21,
+    fontWeight: '600',
+    color: 'white', // Màu xám nhẹ
+    marginBottom: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+  },
+  tripDatesContainer: {
+    marginTop: 10,
+    backgroundColor: '#313842',
+    width: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: 5,
+  },
+  tripDetailsContainer: {
+    marginTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'gray',
+    borderTopWidth: 0.4,
+    borderBottomWidth: 0.4,
+    padding: 15,
+    marginTop: 20,
+  },
+  tripDetails: {
+    fontSize: 18,
+    color: '#555',
+    justifyContent: 'space-between',
+  },
+  flightSection: {
     padding: 16,
+    borderBottomWidth: 1, // Đường kẻ dưới mỗi phần thông tin chuyến bay
+    borderBottomColor: '#eee',
   },
-  tripTitle: {
+  flightTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 8,
   },
-  tripSubtitle: {
+  flightRow: {
+    flexDirection: 'row', // Sắp xếp các phần tử theo hàng ngang
+    justifyContent: 'space-between', // Cách đều các phần tử
+    marginBottom: 4,
+  },
+  flightRoute: {
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  flightDuration: {
+    fontSize: 14,
+    color: '#777',
+  },
+  flightTime: {
+    fontSize: 14,
     color: '#555',
   },
-  tripDate: {
+  flightDate: {
     fontSize: 14,
     color: '#777',
   },
-  tripInfo: {
-    fontSize: 14,
-    color: '#777',
+  flightFeatures: {
+    flexDirection: 'row', // Sắp xếp các tiện ích thành hàng
+    flexWrap: 'wrap', // Nếu tiện ích dài quá, sẽ xuống dòng
+    marginTop: 8,
   },
-  additionalInfo: {
-    padding: 16,
-    backgroundColor: '#e0e0e0',
-  },
-  infoText: {
-    fontSize: 16,
+  feature: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16, // Khoảng cách giữa các tiện ích
     marginBottom: 8,
+  },
+  featureText: {
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 4, // Khoảng cách giữa icon và text
   },
 });
 

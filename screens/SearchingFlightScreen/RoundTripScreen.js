@@ -52,6 +52,9 @@ const RoundTrip = () => {
           travellers,
           cabinType,
           tripType,
+          adults,
+          children,
+          infants,
         });
       };
     
@@ -122,9 +125,10 @@ const RoundTrip = () => {
     };
     const handleDone = () => {
         const totalTravellers = adults + children + infants;
+        setTravellers(totalTravellers); // Cập nhật số lượng hành khách
         setTravellersText(`${totalTravellers} traveler${totalTravellers > 1 ? 's' : ''}`);
         toggleModalOptional();
-    };
+      };
     // Đánh dấu ngày được chọn trên lịch
     const onDayPress = (day) => {
         if (!selectedRange.startDate || selectedRange.endDate) {
@@ -546,25 +550,11 @@ const RoundTrip = () => {
       </Modal>
       {/* Nút Search Flight */}
       <TouchableOpacity
-                style={styles.searchFlightButton}
-                onPress={() =>
-                    navigation.navigate('SearchResultScreen', {
-                        fromCity,
-                        toCity,
-                        departDay,
-                        returnDay,
-                        adults,
-                        children,
-                        infants,
-                        selectedCabin,
-                        tripType,
-                        cabinType,
-                        travellers
-                    })
-                }
+            style={styles.searchFlightButton}
+            onPress={handleSearchFlight} // Sử dụng hàm handleSearchFlight
             >
-                <Text style={styles.searchFlightText}>Search Flight</Text>
-            </TouchableOpacity>
+            <Text style={styles.searchFlightText}>Search Flight</Text>
+        </TouchableOpacity>
         </SafeAreaView>
     );
 };

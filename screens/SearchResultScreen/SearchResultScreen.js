@@ -157,8 +157,8 @@ const SearchResultScreen = () => {
       travellers, 
       cabinType, 
       tripType, 
-      departDay, 
-      returnDay // Truyền thêm departDay và returnDay
+      departDay: departDay.toString(), // Chuyển đổi departDay thành chuỗi
+      returnDay: returnDay.toString() // Chuyển đổi returnDay thành chuỗi
     })}>
       <View style={styles.flightRow}>
         <Image source={{ uri: item.depart.airportIconImg }} style={styles.airportIcon} />
@@ -213,7 +213,7 @@ const SearchResultScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.routeText}>{fromCity} - {toCity}</Text>
-        <Text style={styles.detailsText}>{departDay.toString()} - {returnDay.toString()}, {travellers} traveller(s)</Text>
+        <Text style={styles.detailsText}>{departDay.toString()} - {returnDay.toString()}, {travellers} traveller(s), {cabinType}</Text>
       </View>
 
       <View style={styles.filterRow}>
