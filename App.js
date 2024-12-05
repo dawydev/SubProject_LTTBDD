@@ -18,7 +18,8 @@ import CheckoutSelectSeatScreen from './screens/CheckoutScreen/CheckoutSelectSea
 import CheckoutPaymentScreen from './screens/CheckoutScreen/CheckoutPaymentScreen.js';
 import LoginScreen from './screens/Login/LoginScreen.js'; // Import LoginScreen
 import CheckoutPaymentSuccessScreen from './screens/CheckoutScreen/CheckoutPaymentSuccessScreen.js';
-
+import BookingDetail from './screens/CheckoutScreen/BookingDeatail.js';
+import ChatScreen from './screens/ChatBotAI/ChatScreen.js';
 // Tạo Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -87,6 +88,16 @@ export default function App() {
         <Stack.Screen 
           name="CheckoutPaymentSuccessScreen" 
           component={CheckoutPaymentSuccessScreen} 
+          options={{ headerShown: false }}  // Ẩn header mặc định
+        />
+        <Stack.Screen 
+          name="BookingDetail" 
+          component={BookingDetail} 
+          options={{ headerShown: false }}  // Ẩn header mặc định
+        />
+        <Stack.Screen 
+          name="ChatScreen" 
+          component={ChatScreen} 
           options={{ headerShown: false }}  // Ẩn header mặc định
         />
       </Stack.Navigator>

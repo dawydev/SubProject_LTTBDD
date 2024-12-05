@@ -12,9 +12,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const CheckoutSelectSeatScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { tripType, flight, travellers, planeCode, seats, cabinType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, cabinBag, checkedBag, travelProtection, departPlaneCode, returnPlaneCode } = route.params;
+  const { tripType, flight, travellers, planeCode, seats, cabinType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, cabinBag, checkedBag, travelProtection, departPlaneCode, returnPlaneCode, selectedDepartSeat, selectedReturnSeat } = route.params;
 
-  const [selectedSeat, setSelectedSeat] = useState(null);
+  const [selectedSeat, setSelectedSeat] = useState(tripType === 'depart' ? selectedDepartSeat : selectedReturnSeat);
   const seatPrice = 5.99; // Giá tiền của mỗi ghế
 
   const handleSeatSelection = (seatId) => {
@@ -50,6 +50,34 @@ const CheckoutSelectSeatScreen = () => {
         ) : null}
       </TouchableOpacity>
     );
+  };
+
+  const handleSelect = () => {
+    const totalPrice = parseFloat(price) + (selectedSeat ? seatPrice : 0);
+    navigation.navigate('CheckoutSeatScreen', {
+      tripType,
+      flight,
+      travellers,
+      planeCode,
+      seats,
+      cabinType,
+      departDay,
+      returnDay,
+      adults,
+      children,
+      infants,
+      price: totalPrice.toFixed(2),
+      travelerDetails,
+      contactDetails,
+      cabinBag,
+      checkedBag,
+      travelProtection,
+      departPlaneCode,
+      returnPlaneCode,
+      selectedDepartSeat: tripType === 'depart' ? selectedSeat : selectedDepartSeat,
+      selectedReturnSeat: tripType === 'return' ? selectedSeat : selectedReturnSeat,
+      seatPrice,
+    });
   };
 
   return (
@@ -109,46 +137,14 @@ const CheckoutSelectSeatScreen = () => {
       </ScrollView>
 
       {/* Footer */}
-      {selectedSeat && (
-        <View style={styles.footer}>
+      <View style={styles.footer}>
+        {selectedSeat && (
           <Text style={styles.footerText}>Seat {selectedSeat} - ${seatPrice}</Text>
-          <TouchableOpacity style={styles.selectButton} onPress={() => {
-            if (price === undefined) {
-              console.error("Price is undefined");
-              return;
-            }
-            const parsedPrice = parseFloat(price);
-            if (isNaN(parsedPrice)) {
-              console.error("Invalid price value:", price);
-              return;
-            }
-            const totalPrice = parsedPrice + seatPrice; // Đảm bảo price là số trước khi cộng
-            navigation.navigate('CheckoutSeatScreen', {
-              flight,
-              travellers,
-              cabinType,
-              tripType,
-              departDay,
-              returnDay,
-              adults,
-              children,
-              infants,
-              price: totalPrice.toFixed(2), // Cộng giá tiền của ghế vào tổng giá
-              travelerDetails,
-              contactDetails,
-              cabinBag,
-              checkedBag,
-              travelProtection,
-              departPlaneCode,
-              returnPlaneCode,
-              selectedSeat, // Truyền mã số ghế đã chọn
-              seatPrice // Truyền giá tiền của ghế
-            });
-          }}>
-            <Text style={styles.selectButtonText}>Select</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        )}
+        <TouchableOpacity style={styles.selectButton} onPress={handleSelect}>
+          <Text style={styles.selectButtonText}>Select</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

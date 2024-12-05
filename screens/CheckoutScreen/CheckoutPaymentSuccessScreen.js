@@ -42,7 +42,7 @@ const CheckoutPaymentSuccessScreen = () => {
         <View style={styles.card}>
           {/* Success Message */}
           <View style={styles.successContainer}>
-            <MaterialCommunityIcons name="check-circle-outline" size={55} color="#00BDD5" />
+            <MaterialCommunityIcons name="check-circle-outline" size={55} color="#834216" />
             <Text style={styles.successText}>Booking Successful!</Text>
           </View>
           <View style={styles.flightCodesContainer}>
@@ -66,7 +66,7 @@ const CheckoutPaymentSuccessScreen = () => {
               <Text style={styles.detailText}>{cabinType}</Text>
             </View>
             <View style={styles.detailContainer}>
-              <Text style={styles.detailTitle}>Trip Type</Text>
+              <Text style={styles.detailTitle}>Flight</Text>
               <Text style={styles.detailText}>{tripType}</Text>
             </View>
           </View>
@@ -75,7 +75,16 @@ const CheckoutPaymentSuccessScreen = () => {
           </View>
           {/* Booking Detail Button */}
       <View style={styles.bookingDetailButtonContainer}>
-        <TouchableOpacity style={styles.bookingDetailButton} onPress={() => navigation.navigate('BookingDetail')}>
+        <TouchableOpacity style={styles.bookingDetailButton} onPress={() => navigation.navigate('BookingDetail', { 
+          flight, 
+          travellers, 
+          cabinType, 
+          tripType, 
+          departDay, 
+          returnDay, 
+          price, 
+          travelerDetails 
+        })}>
           <Text style={styles.bookingDetailButtonText}>Booking Details</Text>
         </TouchableOpacity>
       </View>

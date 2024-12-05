@@ -14,7 +14,7 @@ const flightData = [
       arriveTime: '2:00 PM',
       duration: '7h30m',
       stops: '1 stop',
-      airportIconImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Approve_icon.svg/900px-Approve_icon.svg.png',
+      airportIconImg: '../assets/img/LHRicon.png',
       airline: 'SkyHaven',
       fromCode: 'LHR', // London Heathrow
       toCode: 'JFK', // New York JFK
