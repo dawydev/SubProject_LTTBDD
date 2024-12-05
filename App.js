@@ -17,6 +17,7 @@ import CheckoutSeatScreen from './screens/CheckoutScreen/CheckoutSeatScreen.js';
 import CheckoutSelectSeatScreen from './screens/CheckoutScreen/CheckoutSelectSeatScreen.js';
 import CheckoutPaymentScreen from './screens/CheckoutScreen/CheckoutPaymentScreen.js';
 import LoginScreen from './screens/Login/LoginScreen.js'; // Import LoginScreen
+import CheckoutPaymentSuccessScreen from './screens/CheckoutScreen/CheckoutPaymentSuccessScreen.js';
 
 // Tạo Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -81,6 +82,11 @@ export default function App() {
         <Stack.Screen 
           name="CheckoutPaymentScreen" 
           component={CheckoutPaymentScreen} 
+          options={{ headerShown: false }}  // Ẩn header mặc định
+        />
+        <Stack.Screen 
+          name="CheckoutPaymentSuccessScreen" 
+          component={CheckoutPaymentSuccessScreen} 
           options={{ headerShown: false }}  // Ẩn header mặc định
         />
       </Stack.Navigator>

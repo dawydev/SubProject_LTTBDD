@@ -25,9 +25,28 @@ const CheckoutPaymentScreen = () => {
     setSelectedPaymentMethod(method);
   };
 
-  const handleConfirmPayment = () => {
-    // Thực hiện logic xác nhận thanh toán ở đây
-    alert('Payment confirmed');
+  const handleCheckoutPayment = () => {
+    navigation.navigate('CheckoutPaymentSuccessScreen', {
+      flight,
+      travellers,
+      cabinType,
+      tripType,
+      departDay,
+      returnDay,
+      adults,
+      children,
+      infants,
+      price,
+      travelerDetails,
+      contactDetails,
+      cabinBag,
+      checkedBag,
+      travelProtection,
+      departPlaneCode,
+      returnPlaneCode,
+      selectedSeat,
+      seatPrice,
+    });
   };
 
   return (
@@ -37,8 +56,18 @@ const CheckoutPaymentScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Payment</Text>
+        {/* Step Progress */}
+        <View style={styles.stepContainer}>
+          <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="account" size={24} color="white" />
+          <View style={styles.stepDividerActive} />
+          <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="bag-suitcase" size={24} color="white" />
+          <View style={styles.stepDividerActive} />
+          <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="seat" size={24} color="white" />
+          <View style={styles.stepDividerActive} />
+          <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="credit-card" size={24} color="white" />
+        </View>
       </View>
+
 
       {/* Payment Method */}
       <View style={styles.sectionContainer}>
@@ -56,7 +85,7 @@ const CheckoutPaymentScreen = () => {
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={styles.newCardButton} onPress={() => alert('Add new card')}>
-          <MaterialCommunityIcons name="plus-circle-outline" size={24} color="#00BDD5" />
+          <Text style={styles.newCardButtonText}>New Card +</Text>
         </TouchableOpacity>
       </View>
 
@@ -64,21 +93,37 @@ const CheckoutPaymentScreen = () => {
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>Traveller Detail</Text>
         {travelerDetails.map((traveller, index) => (
-          <Text key={index} style={styles.detailText}>{traveller.firstName} {traveller.lastName} ({traveller.gender})</Text>
+          <View key={index} style={styles.detailRow}>
+            <View style={{width:30}}>
+              <MaterialCommunityIcons name="account-outline" size={34} color="#6D6F73" />
+            </View>
+              <Text style={styles.detailText}>{traveller.firstName} {traveller.lastName} </Text>
+              <Text style={styles.detailText}>({traveller.gender})</Text>
+          </View>
         ))}
       </View>
 
       {/* Contact Detail */}
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>Contact Detail</Text>
-        <Text style={styles.detailText}>Email: {contactDetails.email}</Text>
-        <Text style={styles.detailText}>Phone: {contactDetails.phoneNumber}</Text>
+        <View style={styles.detailRow}>
+          <MaterialCommunityIcons name="email-outline" size={34} color="#6D6F73" />
+          <Text style={styles.detailText}>{contactDetails.email}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <MaterialCommunityIcons name="phone-hangup" size={34} color="#6D6F73" />
+          <Text style={styles.detailText}>{contactDetails.phoneNumber}</Text>
+        </View>
       </View>
 
-      {/* Confirm Button */}
-      <View style={styles.confirmButtonContainer}>
-        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmPayment}>
-          <Text style={styles.confirmButtonText}>Confirm Payment</Text>
+      {/* checkout Button */}
+      <View style={styles.checkoutButtonContainer}>
+        <View style={{ flexDirection: 'column' }}>
+          <Text style={styles.textPrice}>${price}</Text>
+          <Text style={{ color: '#555', fontSize: 17, marginLeft: 10 }}>Total price</Text>
+        </View>
+        <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckoutPayment}>
+          <Text style={styles.checkoutButtonText}>Next</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -104,6 +149,30 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     fontWeight: "bold" 
   },
+  stepContainer: {
+    marginLeft: '22%',
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 16,
+    justifyContent: 'center', // Căn giữa theo chiều dọc
+    alignItems: 'center', // Căn giữa theo chiều ngang
+  },
+  stepDivider: { 
+    width: 40, 
+    height: 2, 
+    backgroundColor: "#ccc", 
+    marginHorizontal: 4 
+  },
+  stepDividerActive: {
+    width: 40,
+    height: 2,
+    backgroundColor: "#00aaff",
+    marginHorizontal: 4,
+  },
+  headerTitle: { 
+    fontSize: 18, 
+    fontWeight: "bold" 
+  },
   flightInfoContainer: {
     marginVertical: 20,
     alignItems: 'center',
@@ -116,8 +185,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '500',
     marginBottom: 10,
   },
   paymentMethod: {
@@ -158,9 +227,18 @@ const styles = StyleSheet.create({
     color: '#00BDD5',
     fontWeight: 'bold',
   },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomColor: '#dcdcdc',
+    borderBottomWidth: 0.4,
+    borderTopColor: '#dcdcdc',
+    borderTopWidth: 0.4,
+    padding: 20,
+  },
   detailText: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 20,
+    marginLeft: 15,
   },
   confirmButtonContainer: {
     alignItems: 'center',
@@ -179,6 +257,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  checkoutButtonContainer: {
+    width: '100%',
+    marginTop: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignSelf: 'center',
+    marginBottom: 40,
+  },
+  checkoutButton: {
+    backgroundColor: '#00BDD5',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    width: 250,
+  },
+  checkoutButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  textPrice:{
+    marginLeft: 10,
+    fontSize: 35,
+    fontWeight: 'bold',
+    color: '#000',
+  }
 });
 
 export default CheckoutPaymentScreen;
