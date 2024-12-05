@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const CheckoutBaggageScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, departPlaneCode, returnPlaneCode, seats} = route.params;
+  const { flight, travellers, cabinType, tripType, departDay, returnDay, adults, children, infants, price, travelerDetails, contactDetails, departPlaneCode, returnPlaneCode, seats } = route.params;
 
   const [cabinBag, setCabinBag] = useState("personal");
   const [checkedBag, setCheckedBag] = useState("noChecked");
@@ -154,6 +154,20 @@ const CheckoutBaggageScreen = () => {
         })}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Display travelerDetails and contactDetails */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Traveller Details</Text>
+        {travelerDetails.map((traveller, index) => (
+          <Text key={index} style={styles.detailText}>{traveller.firstName} {traveller.lastName} ({traveller.gender})</Text>
+        ))}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Contact Details</Text>
+        <Text style={styles.detailText}>Email: {contactDetails.email}</Text>
+        <Text style={styles.detailText}>Phone: {contactDetails.phoneNumber}</Text>
       </View>
     </ScrollView>
   );

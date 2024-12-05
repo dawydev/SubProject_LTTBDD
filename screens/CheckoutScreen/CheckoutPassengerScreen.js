@@ -27,7 +27,8 @@ const CheckoutPassengerScreen = () => {
     price,
     departPlaneCode,
     returnPlaneCode,
-    seats
+    seats,
+    
   } = route.params;
 
   const [travelerDetails, setTravelerDetails] = useState(
@@ -137,7 +138,7 @@ const CheckoutPassengerScreen = () => {
         departPlaneCode,
         returnPlaneCode,
         seats // Truyền thêm seats
-          });
+      });
     } else {
       console.log("Please fill in all required fields.");
     }
@@ -152,13 +153,13 @@ const CheckoutPassengerScreen = () => {
         </TouchableOpacity>
         {/* Step Progress */}
         <View style={styles.stepContainer}>
-            <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="account" size={24} color="white" />
-            <View style={styles.stepDividerActive} />
-            <MaterialCommunityIcons name="bag-suitcase" size={24} color="#ccc" />
-            <View style={styles.stepDivider} />
-            <MaterialCommunityIcons name="seat" size={24} color="#ccc" />
-            <View style={styles.stepDivider} />
-            <MaterialCommunityIcons name="credit-card" size={24} color="#ccc" />
+          <MaterialCommunityIcons style={{backgroundColor:'#00BDD5', borderRadius: 15, height:25, width: 25}} name="account" size={24} color="white" />
+          <View style={styles.stepDividerActive} />
+          <MaterialCommunityIcons name="bag-suitcase" size={24} color="#ccc" />
+          <View style={styles.stepDivider} />
+          <MaterialCommunityIcons name="seat" size={24} color="#ccc" />
+          <View style={styles.stepDivider} />
+          <MaterialCommunityIcons name="credit-card" size={24} color="#ccc" />
         </View>
       </View>
       

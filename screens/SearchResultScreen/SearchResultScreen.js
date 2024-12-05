@@ -302,9 +302,12 @@ const SearchResultScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.routeText}>{fromCity} - {toCity}</Text>
-        <Text style={styles.detailsText}>{departDay.toString()} - {returnDay.toString()}, {travellers} traveller(s), {cabinType}</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Search Results</Text>
       </View>
 
       <View style={styles.filterRow}>
@@ -411,15 +414,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 20,
   },
-  routeText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  backButton: {
+    marginRight: 10,
   },
-  detailsText: {
-    color: '#919398',
-    fontSize: 14,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   filterRow: {
     flexDirection: 'row',
