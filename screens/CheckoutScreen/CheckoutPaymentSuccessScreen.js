@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  ImageBackground,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
@@ -31,50 +32,48 @@ const CheckoutPaymentSuccessScreen = () => {
 
   return (
     <View style={styles.container}>
+    <ImageBackground source={require('../../assets/img/background.png')} style={styles.backgroundImage}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backButton}>
-          <MaterialCommunityIcons name="home" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Payment Success</Text>
+        
       </View>
 
       {/* Flight Details Card */}
-      <View style={styles.card}>
-        {/* Success Message */}
-        <View style={styles.successContainer}>
-          <MaterialCommunityIcons name="check-circle-outline" size={55} color="#00BDD5" />
-          <Text style={styles.successText}>Booking Successful!</Text>
-        </View>
-        <View style={styles.flightCodesContainer}>
-          <View style={styles.flightCodeContainer}>
-            <Text style={styles.cardText}>{flight.depart.fromCode}</Text>
-            <Text style={styles.dateText}>{formatDate(departDate)}</Text>
+        <View style={styles.card}>
+          {/* Success Message */}
+          <View style={styles.successContainer}>
+            <MaterialCommunityIcons name="check-circle-outline" size={55} color="#00BDD5" />
+            <Text style={styles.successText}>Booking Successful!</Text>
           </View>
-          <AntDesign name="swap" size={24} color="#000" style={styles.swapIcon} />
-          <View style={styles.flightCodeContainer}>
-            <Text style={styles.cardText}>{flight.depart.toCode}</Text>
-            <Text style={styles.dateText}>{formatDate(returnDate)}</Text>
+          <View style={styles.flightCodesContainer}>
+            <View style={styles.flightCodeContainer}>
+              <Text style={styles.cardText}>{flight.depart.fromCode}</Text>
+              <Text style={styles.dateText}>{formatDate(departDate)}</Text>
+            </View>
+            <AntDesign name="swap" size={24} color="#000" style={styles.swapIcon} />
+            <View style={styles.flightCodeContainer}>
+              <Text style={styles.cardText}>{flight.depart.toCode}</Text>
+              <Text style={styles.dateText}>{formatDate(returnDate)}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.detailRow}>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailTitle}>Traveller</Text>
-            <Text style={styles.detailText}>{travelerDetails.map(traveller => `${traveller.firstName} ${traveller.lastName}`).join(', ')}</Text>
+          <View style={styles.detailRow}>
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailTitle}>Traveller</Text>
+              <Text style={styles.detailText}>{travelerDetails.map(traveller => `${traveller.firstName} ${traveller.lastName}`).join(', ')}</Text>
+            </View>
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailTitle}>Class</Text>
+              <Text style={styles.detailText}>{cabinType}</Text>
+            </View>
+            <View style={styles.detailContainer}>
+              <Text style={styles.detailTitle}>Trip Type</Text>
+              <Text style={styles.detailText}>{tripType}</Text>
+            </View>
           </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailTitle}>Class</Text>
-            <Text style={styles.detailText}>{cabinType}</Text>
+          <View style={styles.totalPriceContainer}>
+            <Text style={styles.priceText}>${price}</Text>
           </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.detailTitle}>Trip Type</Text>
-            <Text style={styles.detailText}>{tripType}</Text>
-          </View>
-        </View>
-        <View style={styles.totalPriceContainer}>
-          <Text style={styles.priceText}>${price}</Text>
-        </View>
-        {/* Booking Detail Button */}
+          {/* Booking Detail Button */}
       <View style={styles.bookingDetailButtonContainer}>
         <TouchableOpacity style={styles.bookingDetailButton} onPress={() => navigation.navigate('BookingDetail')}>
           <Text style={styles.bookingDetailButtonText}>Booking Details</Text>
@@ -83,11 +82,12 @@ const CheckoutPaymentSuccessScreen = () => {
 
       {/* Home Button */}
       <View style={styles.homeButtonContainer}>
-        <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('HomeScreen')}>
           <Text style={styles.homeButtonText}>Home</Text>
         </TouchableOpacity>
       </View>
-      </View>
+        </View>
+      </ImageBackground>
 
       
     </View>
@@ -97,7 +97,6 @@ const CheckoutPaymentSuccessScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -114,6 +113,13 @@ const styles = StyleSheet.create({
   headerTitle: { 
     fontSize: 18, 
     fontWeight: "bold" 
+  },
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   successContainer: {
     alignItems: 'center',

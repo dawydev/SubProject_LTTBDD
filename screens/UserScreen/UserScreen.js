@@ -1,61 +1,130 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const UserScreen = ({ route }) => {
+export default function UserScreen() {
   const navigation = useNavigation();
-  const { favoriteFlights } = route.params || { favoriteFlights: [] };
-  const [showFavorites, setShowFavorites] = useState(false);
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Confirm Logout',
+      'Are you sure you want to log out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   return (
-    <View style={styles.screenContainer}>
-      <TouchableOpacity onPress={() => setShowFavorites(!showFavorites)}>
-        <Text style={styles.screenText}>Chuyến bay yêu thích</Text>
-      </TouchableOpacity>
-      {showFavorites && (
-        <FlatList
-          data={favoriteFlights}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.flightItem}>
-              <Text style={styles.flightText}>
-                {item.depart.fromCode} - {item.depart.toCode}
-              </Text>
-              <Text style={styles.airlineText}>
-                {item.depart.airline}, {item.price}
-              </Text>
-            </View>
-          )}
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Image
+          style={styles.avatar}
+          source={require('../../assets/img/user.png')} // Đường dẫn ảnh đại diện
         />
-      )}
-    </View>
+        <Text style={styles.name}>Anh Khoa</Text>
+        <Text style={styles.email}>anhkhoa22022003@gmail.com</Text>
+      </View>
+
+      <View style={styles.body}>
+        <TouchableOpacity style={styles.menuItem}>
+          <Text style={styles.menuText}>My Bookings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem}>
+          <Text style={styles.menuText}>Payment Methods</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('NotificationScreen')}
+        >
+        <Text style={styles.menuText}>Notifications</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+         style={styles.menuItem}
+         onPress={() => navigation.navigate('HelpScreen')}
+        >
+        <Text style={styles.menuText}>Help & Support</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('SettingScreen')}
+        >
+        <Text style={styles.menuText}>Settings</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.menuItem, styles.logout]} onPress={handleLogout}>
+          <Text style={[styles.menuText, styles.logoutText]}>Log Out</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f8ff',
   },
-  screenText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  header: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1e90ff',
+    paddingVertical: 30,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginBottom: 10,
   },
-  flightItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
   },
-  flightText: {
+  email: {
     fontSize: 16,
+    color: '#fff',
+    marginTop: 5,
+  },
+  body: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  menuItem: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  menuText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  logout: {
+    backgroundColor: '#ff4d4d',
+  },
+  logoutText: {
+    color: '#fff',
     fontWeight: 'bold',
   },
-  airlineText: {
-    fontSize: 14,
-    color: 'gray',
-  },
 });
-
-export default UserScreen;
