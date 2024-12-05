@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import OpenAI from 'openai';
-import { OPENAI_API_KEY } from '../../../SubProject_LTTBDD/config.env'; // Ensure this path is correct
+import { OPENAI_API_KEY } from '../../config.js'; // Ensure this path is correct
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
